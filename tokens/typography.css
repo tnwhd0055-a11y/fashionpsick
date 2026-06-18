@@ -1,0 +1,54 @@
+/* ============================================================
+   SIK — Typography
+   ------------------------------------------------------------
+   Extreme contrast: one towering uppercase display tier for
+   campaign lockups, and a quiet Pretendard UI tier for
+   everything else. The middle ground is intentionally thin —
+   "billboard above, catalog below." Latin display is uppercase
+   with restrained tracking; Korean stays sentence case.
+   ============================================================ */
+
+:root {
+  /* --- Weights --- */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  /* --- Tracking --- */
+  --track-tight: -0.01em;
+  --track-normal: 0; /* @kind spacing */
+  --track-wide: 0.08em;    /* uppercase labels / kickers */
+  --track-wider: 0.22em;   /* spaced wordmark / utility kicker */
+
+  /* --- Display tier (campaign only) --- */
+  --display-campaign-size: 96px;
+  --display-campaign-weight: var(--weight-black);
+  --display-campaign-leading: 0.92;
+  --display-campaign-track: -0.01em;
+
+  --display-xl-size: 64px;   /* secondary editorial / section openers */
+  --display-xl-leading: 0.96;
+
+  /* --- Headings --- */
+  --heading-xl-size: 32px;   /* section headers, PDP title block */
+  --heading-lg-size: 24px;   /* subsection title, large label, PDP price */
+  --heading-md-size: 18px;   /* card title, accordion row label */
+  --heading-leading: 1.2;
+
+  /* --- Body --- */
+  --body-lg-size: 18px;
+  --body-md-size: 16px;      /* default body, product description */
+  --body-sm-size: 14px;
+  --body-leading: 1.6;
+
+  /* --- Labels / UI --- */
+  --label-md-size: 14px;     /* button labels, nav, filter labels */
+  --label-sm-size: 12px;     /* chips, badges, color count */
+  --label-leading: 1.4;
+
+  /* --- Caption / utility --- */
+  --caption-size: 13px;      /* product subtitle, footer link */
+  --utility-size: 11px;      /* legal fine print */
+}

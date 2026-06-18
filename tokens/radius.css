@@ -1,0 +1,25 @@
+/* ============================================================
+   SIK — Radius
+   ------------------------------------------------------------
+   SIK reads more "editorial fashion" than "sportswear": the
+   default geometry is squared. Cards, images, buttons and nav
+   all sit at 0 radius. A near-square 2px softens inputs; a full
+   pill is reserved for occasional fitness-leaning chips and the
+   circular swatch / icon controls.
+   ============================================================ */
+
+:root {
+  --radius-none: 0;
+  --radius-sm: 2px;     /* inputs, subtle softening */
+  --radius-md: 4px;
+  --radius-pill: 999px; /* occasional athletic chip */
+  --radius-full: 50%;   /* swatch dots, circular icon buttons */
+
+  /* Semantic aliases — squared by default */
+  --radius-button: var(--radius-none);
+  --radius-card: var(--radius-none);
+  --radius-image: var(--radius-none);
+  --radius-input: var(--radius-sm);
+  --radius-chip: var(--radius-none);
+  --radius-swatch: var(--radius-full);
+}

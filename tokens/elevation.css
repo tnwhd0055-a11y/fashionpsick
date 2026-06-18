@@ -1,0 +1,35 @@
+/* ============================================================
+   SIK — Elevation
+   ------------------------------------------------------------
+   There is no drop-shadow elevation in SIK's retail chrome.
+   Cards do not lift. The only depth cues are 1px hairline
+   dividers and a single inset bottom-line on sticky bars.
+   Depth comes from photography, not from CSS.
+   ============================================================ */
+
+:root {
+  --elevation-flat: none;
+
+  /* Hairline divider — filter rows, footer columns, PDP rows */
+  --divider-hairline: 1px solid var(--hairline);
+
+  /* Inset bottom-line — the system's only "shadow",
+     used under sticky utility / sub-nav bars + tab strips */
+  --shadow-sticky-edge: inset 0 -1px 0 var(--hairline-soft);
+
+  /* Search focus "glove": 2px ink border read as a soft halo,
+     not a hard outline (paired with a soft-cloud outer ring) */
+  --focus-glove: 0 0 0 2px var(--ink), 0 0 0 6px var(--soft-cloud);
+
+  /* Image art-direction protection wash for on-image headlines */
+  --image-scrim-bottom: linear-gradient(
+    180deg,
+    rgba(17, 17, 17, 0) 40%,
+    rgba(17, 17, 17, 0.55) 100%
+  ); /* @kind other */
+  --image-scrim-top: linear-gradient(
+    180deg,
+    rgba(17, 17, 17, 0.45) 0%,
+    rgba(17, 17, 17, 0) 45%
+  ); /* @kind other */
+}

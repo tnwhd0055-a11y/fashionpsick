@@ -1,0 +1,130 @@
+/* ============================================================
+   SIK — Base
+   ------------------------------------------------------------
+   Light reset + a small set of type/utility classes built on
+   the tokens. Class names are namespaced `sik-` so they never
+   collide with a consuming project's own styles.
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--body-md-size);
+  line-height: var(--body-leading);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- Display / heading type ---------- */
+.sik-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--display-campaign-size);
+  line-height: var(--display-campaign-leading);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.sik-display-xl {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--display-xl-size);
+  line-height: var(--display-xl-leading);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.sik-heading-xl {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--heading-xl-size);
+  line-height: var(--heading-leading);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.sik-heading-lg {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  font-size: var(--heading-lg-size);
+  line-height: var(--heading-leading);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.sik-heading-md {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  font-size: var(--heading-md-size);
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* ---------- Body ---------- */
+.sik-body {
+  font-size: var(--body-md-size);
+  line-height: var(--body-leading);
+  color: var(--text-body);
+}
+
+.sik-body-sm {
+  font-size: var(--body-sm-size);
+  line-height: var(--body-leading);
+  color: var(--text-body);
+}
+
+/* ---------- Labels / kickers ---------- */
+.sik-label {
+  font-weight: var(--weight-semibold);
+  font-size: var(--label-md-size);
+  line-height: var(--label-leading);
+  color: var(--text-primary);
+}
+
+.sik-kicker {
+  font-weight: var(--weight-semibold);
+  font-size: var(--label-sm-size);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.sik-wordmark {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+  color: var(--text-primary);
+}
+
+.sik-caption {
+  font-size: var(--caption-size);
+  color: var(--text-secondary);
+  line-height: var(--label-leading);
+}
+
+/* ---------- Inline link ---------- */
+.sik-link {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.sik-link:hover {
+  opacity: 0.65;
+}

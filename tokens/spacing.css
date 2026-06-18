@@ -1,0 +1,37 @@
+/* ============================================================
+   SIK — Spacing
+   ------------------------------------------------------------
+   8px base. Sections stack at --space-section rhythm with no
+   decorative dividers between them; the photography's bleed-edge
+   is the divider. Product cards carry zero internal padding —
+   the image is full-bleed and metadata sits directly below.
+   ============================================================ */
+
+:root {
+  --space-0: 0;
+  --space-xxs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;     /* grid gutters, card metadata gap */
+  --space-md: 12px;
+  --space-lg: 18px;    /* filter group gap */
+  --space-xl: 24px;    /* PDP disclosure-row vertical padding */
+  --space-2xl: 32px;
+  --space-3xl: 48px;   /* --space-section: gap between major blocks */
+  --space-4xl: 72px;
+  --space-5xl: 120px;  /* generous editorial breathing on hero / about */
+
+  --space-section: 48px;
+
+  /* Layout */
+  --container-max: 1440px;
+  --gutter-page: 32px;       /* edge gutter at desktop */
+  --gutter-page-wide: 80px;  /* edge gutter at 1920px+ */
+  --nav-height: 64px;
+  --utility-bar-height: 36px;
+  --filter-rail-width: 220px;
+
+  /* Touch targets */
+  --tap-min: 44px;
+  --control-height: 48px;    /* primary CTA height */
+  --control-height-sm: 40px; /* chip / icon button */
+}
