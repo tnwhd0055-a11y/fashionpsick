@@ -1,0 +1,50 @@
+/* ============================================================
+   SIK — Responsive / mobile layer
+   ------------------------------------------------------------
+   Keeps the desktop composition intact; on small screens it
+   reflows the multi-column product/editorial blocks to a single
+   column, slims the nav so the wordmark + links + actions stay
+   on one tidy row, scales the burned-in display headlines down
+   so they don't clip, and lets the Korean copy wrap naturally
+   (breaking at spaces, never mid-word).
+   ============================================================ */
+
+/* No page should ever scroll sideways on a phone. */
+html, body { max-width: 100%; overflow-x: hidden; }
+img { max-width: 100%; }
+
+/* Korean reads best breaking only between eojeol (at spaces). */
+.sik-detail p,
+.sik-detail h2 { word-break: keep-all; }
+
+/* ---- Tablet / phone: stack columns ---- */
+@media (max-width: 760px) {
+  :root { --gutter-page: 18px; }
+
+  .sik-2col    { grid-template-columns: 1fr !important; gap: var(--space-2xl) !important; }
+  .sik-3col    { grid-template-columns: 1fr !important; gap: var(--space-xl) !important; }
+  .sik-plp     { grid-template-columns: 1fr !important; }
+  .sik-gallery { grid-template-columns: 48px 1fr !important; }
+
+  /* Drop the desktop-tuned hard breaks; wrap naturally */
+  .sik-detail br { display: none; }
+  .sik-detail p  { line-height: 1.9; }
+}
+
+/* ---- Phone: tidy the header nav onto one row ---- */
+@media (max-width: 560px) {
+  :root { --gutter-page: 14px; }
+
+  .sik-navbar > nav { grid-template-columns: auto 1fr auto !important; column-gap: 8px !important; }
+  .sik-navbar > nav > img { height: 20px !important; }
+  .sik-navbar > nav > div:nth-child(2) { gap: 10px !important; }
+  .sik-navbar > nav > div:nth-child(2) a { font-size: 11px !important; letter-spacing: 0.02em !important; }
+  .sik-navbar > nav > div:nth-child(3) { gap: 0 !important; }
+  .sik-navbar > nav > div:nth-child(3) button { width: 28px !important; height: 28px !important; }
+  .sik-navbar > nav > div:nth-child(3) svg { width: 18px; height: 18px; }
+  .sik-navbar > div:first-child { gap: 12px !important; }
+  .sik-navbar > div:first-child a { font-size: 10px !important; }
+
+  /* Burned-in editorial headlines: shrink so they never clip the photo box */
+  .sik-ed-headline { font-size: clamp(30px, 9vw, 46px) !important; }
+}

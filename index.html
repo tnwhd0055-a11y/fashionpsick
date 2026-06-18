@@ -30,10 +30,10 @@
 
 <!-- Shared helpers + screens (babel, define window globals) -->
 <script type="text/babel" src="kit-shared.jsx"></script>
-<script type="text/babel" src="Home.jsx"></script>
-<script type="text/babel" src="Collection.jsx"></script>
-<script type="text/babel" src="Product.jsx"></script>
-<script type="text/babel" src="About.jsx"></script>
+<script type="text/babel" src="screen-home.jsx"></script>
+<script type="text/babel" src="screen-collection.jsx"></script>
+<script type="text/babel" src="screen-product.jsx"></script>
+<script type="text/babel" src="screen-about.jsx"></script>
 
 <!-- App shell -->
 <script type="text/babel">
@@ -54,11 +54,11 @@
     // map initial "New" → home
     const current = screen === "New" ? "home" : screen;
 
-    if (current === "home") return <window.Home nav={nav} openProduct={openProduct} />;
-    if (current === "collection") return <window.Collection nav={nav} openProduct={openProduct} />;
-    if (current === "product") return <window.Product nav={nav} openProduct={openProduct} productId={productId} />;
-    if (current === "about") return <window.About nav={nav} />;
-    return <window.Home nav={nav} openProduct={openProduct} />;
+    if (current === "home") return <window.HomePage nav={nav} openProduct={openProduct} />;
+    if (current === "collection") return <window.CollectionPage nav={nav} openProduct={openProduct} />;
+    if (current === "product") return <window.ProductPage nav={nav} openProduct={openProduct} productId={productId} />;
+    if (current === "about") return <window.AboutPage nav={nav} />;
+    return <window.HomePage nav={nav} openProduct={openProduct} />;
   }
 
   ReactDOM.createRoot(document.getElementById("root")).render(<App />);

@@ -75,6 +75,7 @@ function Editorial({
       <div style={{ position: "relative", zIndex: 1, padding: 32, textAlign: items === "center" ? "center" : "left", maxWidth: 640 }}>
         {headline && (
           <div
+            className="sik-ed-headline"
             style={{
               fontFamily: "var(--font-display)",
               fontWeight: 800,
