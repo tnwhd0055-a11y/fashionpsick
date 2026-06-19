@@ -51,7 +51,7 @@ function ProductPage({ nav, openProduct, productId }) {
 
           {/* Info */}
           <div>
-            <h1 className="sik-heading-xl" style={{ fontSize: 28 }}>{product.name}</h1>
+            <h1 style={{ fontFamily: "var(--font-sans)", fontSize: 19, fontWeight: 600, lineHeight: 1.4, letterSpacing: "0.01em", color: "var(--ink)", margin: 0, wordBreak: "keep-all" }}>{product.name}</h1>
             <div style={{ fontSize: 14, color: "var(--mute)", marginTop: 8 }}>{product.subtitle}</div>
             <div style={{ marginTop: "var(--space-xl)" }}>
               <PriceTag price={product.price} compareAt={product.compareAt} size="lg" />

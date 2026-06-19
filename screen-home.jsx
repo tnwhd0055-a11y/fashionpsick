@@ -191,7 +191,10 @@ function HomePage({ nav, openProduct }) {
 
       {/* Signature — single vertical product shot, simple caption */}
       <PageWrap style={{ paddingTop: "var(--space-5xl)", paddingBottom: "var(--space-5xl)" }}>
-        <div className="sik-kicker" style={{ textAlign: "center", marginBottom: "var(--space-2xl)" }}>Signature</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginBottom: "var(--space-2xl)" }}>
+          <img src={ICONS.necklace + "-b.png"} alt="" style={{ height: 44, width: "auto" }} />
+          <div className="sik-kicker">EP.1</div>
+        </div>
         <div style={{ maxWidth: 420, margin: "0 auto" }}>
           <button
             onClick={() => openProduct(product.id)}
@@ -208,12 +211,39 @@ function HomePage({ nav, openProduct }) {
       {/* Editorial brand band */}
       <PageWrap style={{ paddingBottom: "var(--space-5xl)" }}>
         <Editorial
+          className="sik-ed-band"
           ratio="16 / 6"
           tone="#111"
           kicker="The brand"
-          headline="Worn at the gym. Kept for the day."
+          headline="FASHIONPSICK"
           cta="Our story"
           onCta={() => nav("About")}
+          art={
+            <div
+              className="sik-ed-signature"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: 1,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "clamp(20px, 4vw, 56px)",
+                padding: "clamp(40px, 16%, 120px) var(--gutter-page) 0",
+              }}
+            >
+              {heroIcons.map((it) => (
+                <img
+                  key={it.key}
+                  src={ICONS[it.key] + "-w.png"}
+                  alt={it.alt}
+                  style={{ height: "clamp(28px, 4.4vw, 54px)", width: "auto", opacity: 0.92 }}
+                />
+              ))}
+            </div>
+          }
         />
       </PageWrap>
 

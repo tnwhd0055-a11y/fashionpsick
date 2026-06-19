@@ -24,10 +24,10 @@ function AboutPage({ nav }) {
       <PageWrap style={{ paddingTop: "var(--space-5xl)" }}>
         <div style={{ maxWidth: 620, margin: "0 auto", textAlign: "center" }}>
           <div className="sik-kicker" style={{ marginBottom: "var(--space-lg)" }}>Our story</div>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: 22, lineHeight: 1.7, color: "var(--ink)", fontWeight: 500, margin: 0, textWrap: "pretty" }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: 22, lineHeight: 1.7, color: "var(--ink)", fontWeight: 500, margin: 0, textWrap: "pretty", wordBreak: "keep-all" }}>
             SIK은 피트니스 라이프스타일에서 출발한 액세서리 브랜드입니다. 천연 조개로 만든 미니멀한 목걸이는 운동할 때도, 평상시에도 자연스럽게 어울립니다.
           </p>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: 16, lineHeight: 1.8, color: "var(--charcoal)", marginTop: "var(--space-xl)", textWrap: "pretty" }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: 16, lineHeight: 1.8, color: "var(--charcoal)", marginTop: "var(--space-xl)", textWrap: "pretty", wordBreak: "keep-all" }}>
             피식푸드(@psickfood)에서 시작된 SIK은 짐웨어와 데일리룩의 경계를 지웁니다. 과한 장식 없이, 절제된 디자인으로 — 매일 착용할 수 있는 가벼움을 만듭니다.
           </p>
         </div>

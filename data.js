@@ -17,7 +17,7 @@
 
   // The store sells exactly one product, in one colour.
   var products = [
-    { id: "stone-bead", name: "식 내추럴 스톤 비즈 목걸이", subtitle: "Natural Stone Bead Necklace · Black Brown", price: 19900, compareAt: 29900, badge: "Signature", image: IMG, gallery: GALLERY, swatches: [SW.blackbrown], length: "42 cm + 5 cm", cat: "Necklaces" },
+    { id: "stone-bead", name: "EP.1 SIK 내추럴 스톤 비즈 목걸이", subtitle: "Natural Stone Bead Necklace · Black Brown", price: 19900, compareAt: 29900, badge: "Signature", image: IMG, gallery: GALLERY, swatches: [SW.blackbrown], length: "42 cm + 5 cm", cat: "Necklaces" },
   ];
 
   window.SIK_DATA = { products: products, SW: SW };

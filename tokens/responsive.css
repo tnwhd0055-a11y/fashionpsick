@@ -47,4 +47,8 @@ img { max-width: 100%; }
 
   /* Burned-in editorial headlines: shrink so they never clip the photo box */
   .sik-ed-headline { font-size: clamp(30px, 9vw, 46px) !important; }
+
+  /* Home brand band: let it grow to fit copy + signature icons instead of clipping */
+  .sik-ed-band { aspect-ratio: auto !important; min-height: 320px; }
+  .sik-ed-band .sik-ed-signature { padding-top: 44px; }
 }

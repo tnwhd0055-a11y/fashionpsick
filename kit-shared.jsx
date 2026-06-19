@@ -45,6 +45,8 @@ function Editorial({
   onCta,
   align = "bottom-left",
   display = false,
+  className = "",
+  art = null,
   style = {},
 }) {
   const justify = align.startsWith("center") ? "center" : "flex-end";
@@ -54,6 +56,7 @@ function Editorial({
     : { background: `linear-gradient(150deg, ${tone} 0%, #0d0d0d 100%)` };
   return (
     <div
+      className={className}
       style={{
         position: "relative",
         aspectRatio: ratio,
@@ -67,6 +70,7 @@ function Editorial({
       }}
     >
       <div style={{ position: "absolute", inset: 0, background: "var(--image-scrim-bottom)" }} />
+      {art}
       {kicker && (
         <span style={{ position: "absolute", top: 24, left: 28, zIndex: 1, fontFamily: "var(--font-sans)", fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--on-ink-mute)" }}>
           {kicker}
@@ -152,7 +156,7 @@ function BrandIcons({ variant = "b", items, gap = 28, size = 40, style = {} }) {
   ];
   const color = variant === "w" ? "var(--on-ink)" : "var(--ink)";
   return (
-    <div style={{ display: "flex", gap, alignItems: "flex-end", flexWrap: "wrap", ...style }}>
+    <div style={{ display: "flex", gap, alignItems: "flex-end", justifyContent: "center", flexWrap: "wrap", ...style }}>
       {def.map((it) => (
         <div key={it.key} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
           <img src={`${I[it.key]}-${variant}.png`} alt={it.label} style={{ height: size, width: "auto" }} />
