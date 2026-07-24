@@ -23,7 +23,8 @@ img { max-width: 100%; }
 
   .sik-2col    { grid-template-columns: 1fr !important; gap: var(--space-2xl) !important; }
   .sik-3col    { grid-template-columns: 1fr !important; gap: var(--space-xl) !important; }
-  .sik-plp     { grid-template-columns: 1fr !important; }
+  /* 모바일: 한 줄에 제품 2개 (Vans 스타일) */
+  .sik-plp     { grid-template-columns: repeat(2, 1fr) !important; column-gap: 12px !important; row-gap: 30px !important; }
   .sik-gallery { grid-template-columns: 48px 1fr !important; }
 
   /* Drop the desktop-tuned hard breaks; wrap naturally */

@@ -34,20 +34,17 @@ function ProductTile({ p, onOpen }) {
     <a href="#" onClick={(e) => { e.preventDefault(); onOpen(p.id); }}
        onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
        style={{ display: "block", textDecoration: "none", color: "inherit" }}>
-      {/* 카테고리 아이콘 — 사진 바로 위 컴팩트 */}
-      <div style={{ display: "flex", justifyContent: "center", paddingBottom: 6 }}>
-        <img src={window.SIK_CAT_ICON(p.cat)} alt={p.cat} style={{ height: 22, width: "auto", opacity: 0.85 }} />
+      {/* 카테고리 아이콘 — 사진 바로 위 컴팩트 (왼쪽) */}
+      <div style={{ display: "flex", justifyContent: "flex-start", paddingBottom: 6 }}>
+        <img src={window.SIK_CAT_ICON(p.cat)} alt={p.cat} style={{ height: 20, width: "auto", opacity: 0.85 }} />
       </div>
       <div style={{ position: "relative", aspectRatio: "4 / 5", background: "var(--soft-cloud)", overflow: "hidden" }}>
         <img src={p.image} alt={p.name} loading="lazy" style={imgStyle(!hover)} />
         <img src={hoverImg} alt="" loading="lazy" style={imgStyle(hover)} />
-        {p.badge && (
-          <span style={{ position: "absolute", top: "var(--space-md)", left: "var(--space-md)", display: "inline-flex", padding: "3px 8px", fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--ink)", background: "var(--paper)", border: "1px solid var(--hairline)" }}>{p.badge}</span>
-        )}
       </div>
-      <div style={{ paddingTop: 10, display: "flex", flexDirection: "column", gap: 4, textAlign: "center", alignItems: "center" }}>
+      <div style={{ paddingTop: 10, display: "flex", flexDirection: "column", gap: 4, textAlign: "left" }}>
         {(p.swatches || []).length > 0 && (
-          <div style={{ display: "flex", gap: 5, justifyContent: "center", marginBottom: 2 }}>
+          <div style={{ display: "flex", gap: 5, marginBottom: 2 }}>
             {p.swatches.map((s, i) => <SwatchDot key={i} color={s.color} label={s.label} size={13} />)}
           </div>
         )}
