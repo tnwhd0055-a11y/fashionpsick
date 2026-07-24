@@ -75,13 +75,14 @@ const HERO_CSS = `
 function HomePage({ nav, openProduct }) {
   const { NavBar, Footer, Button } = window.SIKDesignSystem_7bbf7d;
   const { Editorial, PageWrap } = window;
-  const product = window.SIK_DATA.products[0];
+  const allP = window.SIK_DATA.products;
+  const product = allP.find((p) => p.id === "blackpoint-necklace") || allP[0];
   const footerCols = window.SIK_FOOTER;
   const L = window.SIK_LOGO;
   const IMG = window.SIK_PRODUCT_IMG;
   const ICONS = window.SIK_ICONS;
   const MUSCLE = window.SIK_MUSCLE;
-  const NAV = ["New", "Necklaces", "About"];
+  const NAV = ["New", ...window.SIK_CATEGORIES, "About"];
   const won = (n) => "KRW " + n.toLocaleString("en-US");
 
   // The brand's 5 line-icons, white variant for the ink hero.
@@ -156,9 +157,9 @@ function HomePage({ nav, openProduct }) {
           <div style={{ flex: "1 1 440px", minWidth: 280 }}>
             <div className="sik-kicker" style={{ color: "var(--on-ink-mute)", marginBottom: 20 }}>SS Collection</div>
             <h1 className="sik-display" style={{ color: "var(--on-ink)", fontSize: "clamp(56px, 7.5vw, 116px)" }}>Fashion Psick</h1>
-            <p style={{ color: "var(--on-ink)", fontSize: 17, fontWeight: 500, marginTop: 22, maxWidth: 420 }}>운동과 일상의 경계 없이. 단 하나의 목걸이.</p>
+            <p style={{ color: "var(--on-ink)", fontSize: 17, fontWeight: 500, marginTop: 22, maxWidth: 420 }}>운동과 일상의 경계 없이. 오늘의 무드를 완성하는 SIK.</p>
             <div style={{ marginTop: 32 }}>
-              <Button variant="onImage" size="lg" onClick={() => openProduct(product.id)}>Shop the necklace</Button>
+              <Button variant="onImage" size="lg" onClick={() => nav("Tops")}>Shop the collection</Button>
             </div>
           </div>
 

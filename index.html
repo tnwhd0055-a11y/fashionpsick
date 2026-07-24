@@ -40,13 +40,15 @@
   function App() {
     const [screen, setScreen] = React.useState("New");
     const [productId, setProductId] = React.useState(null);
+    const [category, setCategory] = React.useState(null);
 
     const go = (s) => { setScreen(s); window.scrollTo({ top: 0 }); };
 
     const nav = (link) => {
       if (link === "New") return go("home");
       if (link === "About") return go("about");
-      // Necklaces / Gymwear / Lookbook all land on the collection in this demo
+      // 카테고리(Tops/Necklaces/Accessories 등) → 컬렉션 필터
+      setCategory(link);
       return go("collection");
     };
     const openProduct = (id) => { setProductId(id); go("product"); };
@@ -55,7 +57,7 @@
     const current = screen === "New" ? "home" : screen;
 
     if (current === "home") return <window.HomePage nav={nav} openProduct={openProduct} />;
-    if (current === "collection") return <window.CollectionPage nav={nav} openProduct={openProduct} />;
+    if (current === "collection") return <window.CollectionPage nav={nav} openProduct={openProduct} category={category} />;
     if (current === "product") return <window.ProductPage nav={nav} openProduct={openProduct} productId={productId} />;
     if (current === "about") return <window.AboutPage nav={nav} />;
     return <window.HomePage nav={nav} openProduct={openProduct} />;

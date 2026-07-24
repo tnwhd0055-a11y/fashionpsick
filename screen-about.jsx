@@ -8,7 +8,7 @@ function AboutPage({ nav }) {
 
   return (
     <div style={{ background: "var(--paper)" }}>
-      <NavBar active="About" links={["New", "Necklaces", "About"]} bagCount={2} onNavClick={nav} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
+      <NavBar active="About" links={["New", ...window.SIK_CATEGORIES, "About"]} bagCount={2} onNavClick={nav} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
 
       <Editorial
         ratio="16 / 6.5"
@@ -69,7 +69,7 @@ function AboutPage({ nav }) {
         <div style={{ textAlign: "center" }}>
           <h2 className="sik-display-xl" style={{ fontSize: "clamp(40px, 5vw, 64px)" }}>Wear it your way</h2>
           <div style={{ marginTop: "var(--space-xl)", display: "flex", justifyContent: "center" }}>
-            <Button variant="primary" size="lg" onClick={() => nav("Necklaces")}>Shop the collection</Button>
+            <Button variant="primary" size="lg" onClick={() => nav("Tops")}>Shop the collection</Button>
           </div>
         </div>
       </PageWrap>
