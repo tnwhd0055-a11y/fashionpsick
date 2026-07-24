@@ -190,22 +190,14 @@ function HomePage({ nav, openProduct }) {
         </PageWrap>
       </div>
 
-      {/* Signature — single vertical product shot, simple caption */}
-      <PageWrap style={{ paddingTop: "var(--space-5xl)", paddingBottom: "var(--space-5xl)" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginBottom: "var(--space-2xl)" }}>
-          <img src={ICONS.necklace + "-b.png"} alt="" style={{ height: 44, width: "auto" }} />
-          <div className="sik-kicker">EP.1</div>
+      {/* Shop — 전 제품 그리드 (ALL 과 동일) */}
+      <PageWrap style={{ paddingTop: "var(--space-4xl)", paddingBottom: "var(--space-5xl)" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: "var(--space-2xl)" }}>
+          <img src={MUSCLE.dark} alt="" style={{ height: 40, width: "auto" }} />
+          <div className="sik-kicker">Shop All</div>
         </div>
-        <div style={{ maxWidth: 420, margin: "0 auto" }}>
-          <button
-            onClick={() => openProduct(product.id)}
-            aria-label={product.name}
-            style={{ display: "block", width: "100%", padding: 0, border: "none", cursor: "pointer", aspectRatio: "3 / 4.4", backgroundColor: "var(--soft-cloud)", backgroundImage: `url(${IMG})`, backgroundSize: "cover", backgroundPosition: "center" }}
-          />
-          <div style={{ marginTop: "var(--space-lg)" }}>
-            <div style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--ink)", letterSpacing: "0.01em" }}>{product.name}</div>
-            <div style={{ fontFamily: "var(--font-sans)", fontSize: 14, color: "var(--charcoal)", marginTop: 4 }}>{won(product.price)}</div>
-          </div>
+        <div className="sik-plp" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "var(--space-2xl) var(--space-lg)" }}>
+          {allP.map((p) => <window.ProductTile key={p.id} p={p} onOpen={openProduct} />)}
         </div>
       </PageWrap>
 

@@ -59,10 +59,10 @@ function ProductPage({ nav, openProduct, productId }) {
 
           {/* Info */}
           <div>
-            <h1 style={{ fontFamily: "var(--font-sans)", fontSize: 19, fontWeight: 600, lineHeight: 1.4, letterSpacing: "0.01em", color: "var(--ink)", margin: 0, wordBreak: "keep-all" }}>{product.name}</h1>
-            <div style={{ fontSize: 14, color: "var(--mute)", marginTop: 8 }}>{product.subtitle}</div>
-            <div style={{ marginTop: "var(--space-xl)" }}>
-              <PriceTag price={product.price} compareAt={product.compareAt} size="lg" />
+            <h1 style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 600, lineHeight: 1.35, letterSpacing: "0.01em", color: "var(--ink)", margin: 0, wordBreak: "keep-all" }}>{product.name}</h1>
+            <div style={{ fontSize: 13, color: "var(--mute)", marginTop: 6 }}>{product.subtitle}</div>
+            <div style={{ marginTop: "var(--space-lg)" }}>
+              <window.SIK_CompactPrice price={product.price} compareAt={product.compareAt} size={17} />
             </div>
 
             {swatches.length > 0 && (

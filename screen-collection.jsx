@@ -1,6 +1,28 @@
 /* SIK Storefront — Collection (category grid) */
+// 카테고리별 브랜드 라인 아이콘 (사진 위 컴팩트 표시)
+window.SIK_CAT_ICON = function (cat) {
+  if (cat === "Necklaces") return "assets/icon-necklace-b.png";
+  if (cat === "Accessories") return "assets/icon-hanger-b.png";
+  return "assets/icon-tshirt-b.png"; // Tops 등
+};
+
+// 컴팩트 가격 (정가 취소선 + 판매가 + 할인율%) — Gramicci 스타일
+function CompactPrice({ price, compareAt, size = 13 }) {
+  const won = (n) => n.toLocaleString("en-US") + "원";
+  const onSale = typeof compareAt === "number" && compareAt > price;
+  const pct = onSale ? Math.round((1 - price / compareAt) * 100) : 0;
+  return (
+    <div style={{ display: "flex", alignItems: "baseline", gap: 6, fontFamily: "var(--font-sans)", fontSize: size, flexWrap: "wrap" }}>
+      {onSale && <span style={{ color: "var(--mute)", textDecoration: "line-through", fontSize: size - 1 }}>{won(compareAt)}</span>}
+      <span style={{ fontWeight: 700, color: "var(--ink)" }}>{won(price)}</span>
+      {onSale && <span style={{ color: "var(--sale)", fontWeight: 700 }}>{pct}%</span>}
+    </div>
+  );
+}
+window.SIK_CompactPrice = CompactPrice;
+
 function ProductTile({ p, onOpen }) {
-  const { PriceTag, SwatchDot } = window.SIKDesignSystem_7bbf7d;
+  const { SwatchDot } = window.SIKDesignSystem_7bbf7d;
   const [hover, setHover] = React.useState(false);
   const hoverImg = p.frontImage || p.image;
   const imgStyle = (show) => ({
@@ -12,26 +34,30 @@ function ProductTile({ p, onOpen }) {
     <a href="#" onClick={(e) => { e.preventDefault(); onOpen(p.id); }}
        onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
        style={{ display: "block", textDecoration: "none", color: "inherit" }}>
+      {/* 카테고리 아이콘 — 사진 바로 위 컴팩트 */}
+      <div style={{ display: "flex", justifyContent: "center", paddingBottom: 6 }}>
+        <img src={window.SIK_CAT_ICON(p.cat)} alt={p.cat} style={{ height: 22, width: "auto", opacity: 0.85 }} />
+      </div>
       <div style={{ position: "relative", aspectRatio: "4 / 5", background: "var(--soft-cloud)", overflow: "hidden" }}>
         <img src={p.image} alt={p.name} loading="lazy" style={imgStyle(!hover)} />
         <img src={hoverImg} alt="" loading="lazy" style={imgStyle(hover)} />
         {p.badge && (
-          <span style={{ position: "absolute", top: "var(--space-md)", left: "var(--space-md)", display: "inline-flex", padding: "4px 10px", fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--ink)", background: "var(--paper)", border: "1px solid var(--hairline)" }}>{p.badge}</span>
+          <span style={{ position: "absolute", top: "var(--space-md)", left: "var(--space-md)", display: "inline-flex", padding: "3px 8px", fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--ink)", background: "var(--paper)", border: "1px solid var(--hairline)" }}>{p.badge}</span>
         )}
       </div>
-      <div style={{ paddingTop: "var(--space-md)", display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{ paddingTop: 10, display: "flex", flexDirection: "column", gap: 4, textAlign: "center", alignItems: "center" }}>
         {(p.swatches || []).length > 0 && (
-          <div style={{ display: "flex", gap: 6 }}>
-            {p.swatches.map((s, i) => <SwatchDot key={i} color={s.color} label={s.label} size={15} />)}
+          <div style={{ display: "flex", gap: 5, justifyContent: "center", marginBottom: 2 }}>
+            {p.swatches.map((s, i) => <SwatchDot key={i} color={s.color} label={s.label} size={13} />)}
           </div>
         )}
-        <div style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--ink)", lineHeight: 1.3 }}>{p.name}</div>
-        {p.subtitle && <div style={{ fontSize: 13, color: "var(--mute)" }}>{p.subtitle}</div>}
-        <PriceTag price={p.price} compareAt={p.compareAt} size="sm" />
+        <div style={{ fontFamily: "var(--font-sans)", fontSize: 13.5, fontWeight: 600, color: "var(--ink)", lineHeight: 1.35 }}>{p.name}</div>
+        <CompactPrice price={p.price} compareAt={p.compareAt} />
       </div>
     </a>
   );
 }
+window.ProductTile = ProductTile;
 
 function CollectionPage({ nav, openProduct, category }) {
   const { NavBar, Footer } = window.SIKDesignSystem_7bbf7d;
