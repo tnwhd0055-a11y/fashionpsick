@@ -8,7 +8,7 @@ function AboutPage({ nav }) {
 
   return (
     <div style={{ background: "var(--paper)" }}>
-      <NavBar active="About" links={["New", ...window.SIK_CATEGORIES, "About"]} bagCount={2} onNavClick={nav} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
+      <NavBar active="About" links={["All", ...window.SIK_CATEGORIES, "About"]} bagCount={2} onNavClick={nav} onLogoClick={() => nav("home")} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
 
       <Editorial
         ratio="16 / 6.5"

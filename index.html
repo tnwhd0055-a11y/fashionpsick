@@ -45,9 +45,9 @@
     const go = (s) => { setScreen(s); window.scrollTo({ top: 0 }); };
 
     const nav = (link) => {
-      if (link === "New") return go("home");
+      if (link === "home" || link === "New") return go("home");
       if (link === "About") return go("about");
-      // 카테고리(Tops/Necklaces/Accessories 등) → 컬렉션 필터
+      // "All" 또는 카테고리(Tops/Necklaces/Accessories) → 컬렉션 필터
       setCategory(link);
       return go("collection");
     };

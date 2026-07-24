@@ -12,7 +12,7 @@ function ProductPage({ nav, openProduct, productId }) {
 
   const [sw, setSw] = React.useState(0);
   const [thumb, setThumb] = React.useState(0);
-  const NAV = ["New", ...window.SIK_CATEGORIES, "About"];
+  const NAV = ["All", ...window.SIK_CATEGORIES, "About"];
 
   // 색상별 갤러리(있으면) → 스와치가 갤러리를 전환. 없으면 product.gallery.
   const gallery = hasColors ? product.colors[sw].gallery : (product.gallery || [product.image]);
@@ -29,12 +29,12 @@ function ProductPage({ nav, openProduct, productId }) {
 
   return (
     <div style={{ background: "var(--paper)" }}>
-      <NavBar active={cat} links={NAV} bagCount={2} onNavClick={nav} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
+      <NavBar active={cat} links={NAV} bagCount={2} onNavClick={nav} onLogoClick={() => nav("home")} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
 
       <div style={{ boxShadow: "var(--shadow-sticky-edge)" }}>
         <PageWrap>
           <div style={{ display: "flex", alignItems: "center", height: 52, fontSize: 13, color: "var(--mute)" }}>
-            <a href="#" onClick={(e) => { e.preventDefault(); nav("New"); }} style={{ color: "var(--mute)", textDecoration: "none" }}>Home</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); nav("home"); }} style={{ color: "var(--mute)", textDecoration: "none" }}>Home</a>
             <span style={{ margin: "0 8px" }}>/</span>
             <a href="#" onClick={(e) => { e.preventDefault(); nav(cat); }} style={{ color: "var(--mute)", textDecoration: "none" }}>{cat}</a>
             <span style={{ margin: "0 8px" }}>/</span>

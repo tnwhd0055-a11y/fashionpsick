@@ -82,7 +82,7 @@ function HomePage({ nav, openProduct }) {
   const IMG = window.SIK_PRODUCT_IMG;
   const ICONS = window.SIK_ICONS;
   const MUSCLE = window.SIK_MUSCLE;
-  const NAV = ["New", ...window.SIK_CATEGORIES, "About"];
+  const NAV = ["All", ...window.SIK_CATEGORIES, "About"];
   const won = (n) => "KRW " + n.toLocaleString("en-US");
 
   // The brand's 5 line-icons, white variant for the ink hero.
@@ -149,7 +149,7 @@ function HomePage({ nav, openProduct }) {
   return (
     <div style={{ background: "var(--paper)" }}>
       <style>{HERO_CSS}</style>
-      <NavBar active="New" links={NAV} bagCount={2} onNavClick={nav} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
+      <NavBar active={null} links={NAV} bagCount={2} onNavClick={nav} onLogoClick={() => nav("home")} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
 
       {/* Full-width ink campaign panel — copy left, brand-mark art right */}
       <div style={{ background: "var(--ink)" }}>

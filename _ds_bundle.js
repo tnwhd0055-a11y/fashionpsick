@@ -849,6 +849,7 @@ function NavBar({
   logoSrc,
   bagCount,
   onNavClick,
+  onLogoClick,
   onUtilityClick,
   style = {}
 }) {
@@ -899,10 +900,12 @@ function NavBar({
   }, logoSrc ? /*#__PURE__*/React.createElement("img", {
     src: logoSrc,
     alt: wordmark,
+    onClick: () => onLogoClick && onLogoClick(),
     style: {
       height: 26,
       width: "auto",
-      display: "block"
+      display: "block",
+      cursor: onLogoClick ? "pointer" : "default"
     }
   }) : /*#__PURE__*/React.createElement("div", {
     style: {
