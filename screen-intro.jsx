@@ -20,7 +20,7 @@ const INTRO_CSS = `
 .sik-intro-img {
   position: absolute;
   inset: 0;
-  background-image: url("assets/hero-desktop.jpg");
+  background-image: url("assets/hero-desktop-alt.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -34,15 +34,15 @@ const INTRO_CSS = `
   to   { transform: scale(1); }
 }
 
-/* 하단 스크림 — 어떤 사진이 와도 흰 글씨 대비를 보장 */
+/* 스크림 — 상단 로고와 하단 스크롤 표시의 대비만 확보 (사진은 최대한 그대로) */
 .sik-intro-scrim {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg,
-    rgba(17,17,17,.42) 0%,
-    rgba(17,17,17,0) 26%,
-    rgba(17,17,17,0) 46%,
-    rgba(17,17,17,.72) 100%);
+    rgba(17,17,17,.34) 0%,
+    rgba(17,17,17,0) 22%,
+    rgba(17,17,17,0) 62%,
+    rgba(17,17,17,.46) 100%);
   pointer-events: none;
 }
 
@@ -56,38 +56,16 @@ const INTRO_CSS = `
   pointer-events: none;
 }
 
+/* 상단 중앙에 워드마크만 작게 */
 .sik-intro-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
-.sik-intro-top img { height: clamp(20px, 2vw, 28px); width: auto; }
-.sik-intro-utility {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: var(--track-wider);
-  text-transform: uppercase;
-  color: rgba(255,255,255,.72);
-}
+.sik-intro-top img { height: clamp(16px, 1.5vw, 22px); width: auto; }
 
-.sik-intro-bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
-
-.sik-intro-kicker {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: var(--track-wider);
-  text-transform: uppercase;
-  color: rgba(255,255,255,.78);
-  margin-bottom: 14px;
-}
-.sik-intro-mark { display: block; width: clamp(200px, 26vw, 420px); height: auto; }
-.sik-intro-tag {
-  margin-top: 16px;
-  font-size: clamp(13px, 1.2vw, 15px);
-  color: rgba(255,255,255,.86);
-  word-break: keep-all;
-  max-width: 26em;
-}
+/* 하단 중앙에 스크롤 표시만 */
+.sik-intro-bottom { display: flex; align-items: flex-end; justify-content: center; }
 
 .sik-intro-cue {
   display: flex;
@@ -123,8 +101,6 @@ const INTRO_CSS = `
 @keyframes sik-intro-fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 @media (max-width: 560px) {
-  .sik-intro-bottom { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .sik-intro-cue { align-self: center; }
   .sik-intro-cue i { height: 32px; }
 }
 
@@ -175,15 +151,9 @@ function IntroCurtain({ onDone }) {
         <div className="sik-intro-inner">
           <div className="sik-intro-top">
             <img src={window.SIK_LOGO.dark} alt="SIK" />
-            <div className="sik-intro-utility">SS Collection</div>
           </div>
 
           <div className="sik-intro-bottom">
-            <div>
-              <div className="sik-intro-kicker">Fashion Psick</div>
-              <img className="sik-intro-mark" src={window.SIK_LOGO.dark} alt="SIK" />
-              <div className="sik-intro-tag">운동과 일상의 경계 없이. 오늘의 무드를 완성하는 SIK.</div>
-            </div>
             <div className="sik-intro-cue"><i /><span>Scroll</span></div>
           </div>
         </div>
