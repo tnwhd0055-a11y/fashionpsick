@@ -17,9 +17,10 @@
     // 1) 기존 시그니처 목걸이 (유지)
     {
       id: "stone-bead", cat: "Necklaces",
-      name: "EP.1 SIK 내추럴 스톤 비즈 목걸이",
+      name: "EP.1 내추럴 스톤 비즈 목걸이",
       subtitle: "Natural Stone Bead Necklace · Black Brown",
       price: 19900, compareAt: 29900, badge: "Signature",
+      buy: "https://m.smartstore.naver.com/athleticstore/products/13635362111",
       image: "assets/necklace-model.jpg",
       frontImage: "assets/necklace-1.png",
       gallery: ["assets/necklace-model.jpg", "assets/necklace-1.png", "assets/necklace-2.png", "assets/necklace-3.png"],
@@ -27,18 +28,19 @@
       detail: "stone",
     },
 
-    // 2) 블랙 포인트 목걸이 (신규)
+    // 2) 블랙 펄 비즈 목걸이 (신규)
     {
       id: "blackpoint-necklace", cat: "Necklaces",
-      name: "블랙 포인트 목걸이",
-      subtitle: "Black Point Beaded Necklace · Black",
+      name: "EP.2 블랙 펄 비즈 목걸이",
+      subtitle: "Black Pearl Beaded Necklace · Black",
       price: 19900, compareAt: 29900, badge: "New",
+      buy: "https://m.smartstore.naver.com/athleticstore/products/13683518219",
       image: "assets/blackpoint-worn.jpg",
       frontImage: "assets/blackpoint-front.jpg",
       gallery: ["assets/blackpoint-worn.jpg", "assets/blackpoint-full.jpg", "assets/blackpoint-front.jpg", "assets/blackpoint-clasp.jpg"],
-      swatches: [SW.black], length: "42 cm + 5 cm",
+      swatches: [SW.black], length: "43 cm + 5 cm",
       detail: "generic",
-      spec: [["브랜드", "SIK"], ["제품명", "블랙 포인트 목걸이"], ["컬러", "블랙"], ["소재", "블랙 시드비즈 · 담수진주 · 스테인리스 클래스프"], ["사이즈", "42cm + 연장 체인 5cm"], ["제조국", "수입"]],
+      spec: [["브랜드", "SIK"], ["제품명", "EP.2 블랙 펄 비즈 목걸이"], ["컬러", "블랙"], ["소재", "블랙 시드비즈 · 담수진주 · 스테인리스 클래스프"], ["사이즈", "43cm + 연장 체인 5cm"], ["제조국", "중국"]],
       blurb: "블랙 시드비즈에 담수진주와 포인트 비즈를 더한 데일리 목걸이. 단독으로도, 레이어드로도 잘 어울립니다.",
     },
 
@@ -96,12 +98,13 @@
       name: "웨스턴 벨트",
       subtitle: "Western Belt · Silver",
       price: 9900, badge: "New",
+      buy: "https://m.smartstore.naver.com/athleticstore/products/13683518247",
       image: "assets/belt-1.jpg",
       frontImage: "assets/belt-2.jpg",
       gallery: ["assets/belt-1.jpg", "assets/belt-2.jpg", "assets/belt-3.jpg"],
       swatches: [SW.black],
       detail: "generic",
-      spec: [["브랜드", "SIK"], ["제품명", "웨스턴 벨트"], ["컬러", "블랙 (실버 버클)"], ["소재", "인조가죽 · 메탈 버클"], ["제조국", "수입"]],
+      spec: [["브랜드", "SIK"], ["제품명", "웨스턴 벨트"], ["컬러", "블랙 (실버 버클)"], ["소재", "인조가죽 · 메탈 버클"], ["사이즈", "총길이 105cm · 폭 2cm · 버클 4.5 x 3.5cm"], ["제조국", "중국"]],
       blurb: "실버 버클과 포인트 팁이 돋보이는 웨스턴 무드 벨트. 데님과 슬랙스 모두에 잘 어울립니다.",
     },
   ];
@@ -135,8 +138,8 @@
   window.SIK_INSTAGRAM = IG;
 
   // Naver SmartStore — 모바일 URL(m.)이라 폰에서 네이버 앱으로 잘 넘어감 (로그인 세션 유지 → 구매전환↑).
-  // 지금은 전 제품 공통 링크 (추후 제품별 링크로 교체)
-  window.SIK_SMARTSTORE = "https://m.smartstore.naver.com/athleticstore/products/13635362111";
+  // 제품별 링크는 각 product 의 buy 필드. 아직 스토어에 없는 제품은 이 스토어 홈으로 떨어진다.
+  window.SIK_SMARTSTORE = "https://m.smartstore.naver.com/athleticstore";
 
   window.SIK_UTILITY = ["Find a Store", "Help", "Naver Store"];
 

@@ -88,7 +88,7 @@ function ProductPage({ nav, openProduct, productId }) {
             )}
 
             <div style={{ display: "flex", gap: "var(--space-sm)", marginTop: "var(--space-2xl)" }}>
-              <Button as="a" href={window.SIK_SMARTSTORE} target="_blank" rel="noopener noreferrer" variant="primary" size="lg" fullWidth style={{ fontSize: 17 }}>네이버에서 구매하기</Button>
+              <Button as="a" href={product.buy || window.SIK_SMARTSTORE} target="_blank" rel="noopener noreferrer" variant="primary" size="lg" fullWidth style={{ fontSize: 17 }}>네이버에서 구매하기</Button>
               <IconButton label="Wishlist" variant="outline" size={56}>{heart}</IconButton>
             </div>
             <div style={{ fontSize: 12, color: "var(--mute)", marginTop: "var(--space-md)" }}>
