@@ -54,7 +54,7 @@ function ProductPage({ nav, openProduct, productId }) {
                 </button>
               ))}
             </div>
-            <div style={{ aspectRatio: "1 / 1", backgroundColor: "var(--soft-cloud)", backgroundImage: `url(${gallery[thumb]})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+            <div style={{ aspectRatio: "1 / 1", backgroundColor: "var(--soft-cloud)", backgroundImage: `url(${gallery[thumb]})`, backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center" }} />
           </div>
 
           {/* Info */}
