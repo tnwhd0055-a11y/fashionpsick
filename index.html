@@ -42,7 +42,8 @@
     const [screen, setScreen] = React.useState("New");
     const [productId, setProductId] = React.useState(null);
     const [category, setCategory] = React.useState(null);
-    const [intro, setIntro] = React.useState(true);   // 첫 진입 인트로 커튼
+    // 첫 진입 인트로 커튼. ?nointro=1 이면 건너뛴다 (스크린샷·디자인 확인용).
+    const [intro, setIntro] = React.useState(() => !/[?&]nointro=1/.test(window.location.search));
 
     const go = (s) => { setScreen(s); window.scrollTo({ top: 0 }); };
 

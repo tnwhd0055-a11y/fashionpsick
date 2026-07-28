@@ -1,18 +1,17 @@
 /* SIK Storefront — Product (PDP) */
 function ProductPage({ nav, openProduct, productId }) {
-  const { NavBar, Footer, PriceTag, SwatchDot, Button, IconButton, DisclosureRow } = window.SIKDesignSystem_7bbf7d;
-  const { PageWrap } = window;
+  const { PriceTag, SwatchDot, Button, IconButton, DisclosureRow } = window.SIKDesignSystem_7bbf7d;
+  const { PageWrap, SikHeader, SikFooter } = window;
   const P = window.SIK_DATA.products;
-  const footerCols = window.SIK_FOOTER;
-  const L = window.SIK_LOGO;
 
   const product = P.find((p) => p.id === productId) || P[0];
   const cat = product.cat || "Necklaces";
+  // 브레드크럼은 상단 내비와 같은 말을 써야 한다. 목걸이는 ACCESSORIES 로 묶여 있다.
+  const navKey = product.id === "western-belt" ? "Belt" : (cat === "Necklaces" ? "Accessories" : cat);
   const hasColors = Array.isArray(product.colors) && product.colors.length > 0;
 
   const [sw, setSw] = React.useState(0);
   const [thumb, setThumb] = React.useState(0);
-  const NAV = ["All", ...window.SIK_CATEGORIES, "About"];
 
   // 색상별 갤러리(있으면) → 스와치가 갤러리를 전환. 없으면 product.gallery.
   const gallery = hasColors ? product.colors[sw].gallery : (product.gallery || [product.image]);
@@ -29,14 +28,14 @@ function ProductPage({ nav, openProduct, productId }) {
 
   return (
     <div style={{ background: "var(--paper)" }}>
-      <NavBar active={cat} links={NAV} bagCount={2} onNavClick={nav} onLogoClick={() => nav("home")} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
+      <SikHeader nav={nav} active={null} />
 
       <div style={{ boxShadow: "var(--shadow-sticky-edge)" }}>
         <PageWrap>
           <div style={{ display: "flex", alignItems: "center", height: 52, fontSize: 13, color: "var(--mute)" }}>
             <a href="#" onClick={(e) => { e.preventDefault(); nav("home"); }} style={{ color: "var(--mute)", textDecoration: "none" }}>Home</a>
             <span style={{ margin: "0 8px" }}>/</span>
-            <a href="#" onClick={(e) => { e.preventDefault(); nav(cat); }} style={{ color: "var(--mute)", textDecoration: "none" }}>{cat}</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); nav(navKey); }} style={{ color: "var(--mute)", textDecoration: "none" }}>{window.SIK_NAV_LABEL(navKey)}</a>
             <span style={{ margin: "0 8px" }}>/</span>
             <span style={{ color: "var(--ink)" }}>{product.name}</span>
           </div>
@@ -111,7 +110,7 @@ function ProductPage({ nav, openProduct, productId }) {
 
       {product.detail === "stone" ? <StoneDetail /> : <GenericDetail product={product} gallery={gallery} />}
 
-      <Footer columns={footerCols} logoSrc={L.light} linkHref={window.SIK_INSTAGRAM} />
+      <SikFooter nav={nav} />
     </div>
   );
 }

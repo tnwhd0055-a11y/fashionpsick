@@ -30,6 +30,13 @@
   --ink-elevated: #1c1c1c;   /* card on a dark block */
   --on-ink-mute: #a8a8a8;    /* muted text on dark */
 
+  /* --- Editorial warm neutrals (2026-07 리디자인) ---
+     워드마크 원본의 오프화이트에서 뽑은 값. 순수 회색을 쓰면 사진 옆에서
+     차갑게 떠 보여서, 전부 bone 쪽으로 살짝 치우쳐 둔다. */
+  --bone: #f2efe9;           /* 이미지 매트, 강조 밴드 */
+  --warm-mute: #8b857b;      /* 캡션, 가격, 보조 텍스트 */
+  --warm-line: #e6e2da;      /* 헤어라인 (--hairline 보다 따뜻함) */
+
   /* --- Commerce semantics (the only chromatic colors in chrome) --- */
   --sale: #c8102e;           /* discounted price + "% off" copy */
   --sale-deep: #8f0a20;      /* sale pressed */

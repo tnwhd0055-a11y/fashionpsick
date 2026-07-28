@@ -1,14 +1,13 @@
 /* SIK Storefront — About */
 function AboutPage({ nav }) {
-  const { NavBar, Footer, Button } = window.SIKDesignSystem_7bbf7d;
-  const { Editorial, PageWrap, BrandIcons } = window;
-  const footerCols = window.SIK_FOOTER;
+  const { Button } = window.SIKDesignSystem_7bbf7d;
+  const { Editorial, PageWrap, BrandIcons, SikHeader, SikFooter } = window;
   const L = window.SIK_LOGO;
   const IMG = window.SIK_PRODUCT_IMG;
 
   return (
     <div style={{ background: "var(--paper)" }}>
-      <NavBar active="About" links={["All", ...window.SIK_CATEGORIES, "About"]} bagCount={2} onNavClick={nav} onLogoClick={() => nav("home")} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
+      <SikHeader nav={nav} active={null} />
 
       <Editorial
         ratio="16 / 6.5"
@@ -75,7 +74,7 @@ function AboutPage({ nav }) {
       </PageWrap>
 
       <div style={{ marginTop: "var(--space-5xl)" }}>
-        <Footer columns={footerCols} logoSrc={L.light} linkHref={window.SIK_INSTAGRAM} />
+        <SikFooter nav={nav} />
       </div>
     </div>
   );

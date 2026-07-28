@@ -1,246 +1,150 @@
-/* SIK Storefront — Home (single product) */
-const HERO_CSS = `
-.sik-hero-art {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 300px;
+/* SIK Storefront — Home (에디토리얼 리디자인, 2026-07)
+   인트로 커튼(screen-intro.jsx)이 걷힌 뒤 드러나는 화면.
+   헤더/푸터는 kit-shared 의 SikHeader / SikFooter 를 쓴다. */
+
+const HOME_CSS = `
+/* ── 히어로 : 사진 두 장만 여백 위에 비대칭으로 띄운다. 헤드라인 없음 ── */
+.sk-hero{display:grid;grid-template-columns:repeat(12,1fr);gap:0 24px;
+  padding:clamp(56px,8vw,120px) var(--sk-pad) clamp(56px,7vw,110px)}
+.sk-shot{background:var(--bone);overflow:hidden}
+.sk-shot img{width:100%;height:100%;object-fit:cover;display:block}
+.sk-cap{margin-top:14px;padding-top:10px;border-top:1px solid var(--warm-line);color:var(--warm-mute)}
+.sk-hero-a{grid-column:3/7;margin:0}
+.sk-hero-a .sk-shot{aspect-ratio:4/5}
+.sk-hero-b{grid-column:9/12;align-self:center;transform:translateY(6%);margin:0}
+.sk-hero-b .sk-shot{aspect-ratio:4/5}   /* 1:1 로 자르면 전신컷의 머리가 날아간다 */
+
+/* ── 브랜드 시그니처 ── */
+.sk-sign{text-align:center;padding:0 var(--sk-pad) clamp(64px,9vw,124px)}
+.sk-sign .sk-handle{display:inline-block;font-size:clamp(17px,1.5vw,21px);color:inherit;text-decoration:none}
+.sk-sign .sk-handle:hover{text-decoration:underline;text-underline-offset:5px}
+.sk-sign p{margin:14px 0 0;color:var(--warm-mute);font-size:clamp(14px,1.15vw,17px)}
+
+/* ── 제품 그리드 : 카드 테두리도 배지도 없이, 사진이 프레임을 꽉 채운다 ── */
+.sk-grid-sec{padding:0 var(--sk-pad) clamp(64px,9vw,130px)}
+.sk-sec-head{display:flex;justify-content:space-between;align-items:baseline;
+  padding-bottom:18px;border-bottom:1px solid var(--warm-line);margin-bottom:clamp(28px,4vw,54px)}
+.sk-sec-head h2{margin:0}
+.sk-sec-head .sk-count{color:var(--warm-mute)}
+.sk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3.2vw,52px) clamp(16px,2.4vw,36px)}
+.sk-card{display:block;color:inherit;text-decoration:none}
+.sk-card .sk-shot{aspect-ratio:3/4}
+.sk-card img{transition:transform .8s cubic-bezier(.2,.7,.3,1)}
+.sk-card:hover img{transform:scale(1.035)}
+.sk-meta{display:flex;justify-content:space-between;gap:14px;margin-top:16px;align-items:baseline}
+.sk-meta .sk-name{word-break:keep-all}   /* 한글 제품명이 어절 중간에서 끊기지 않게 */
+.sk-meta .sk-price{color:var(--warm-mute);white-space:nowrap}
+
+/* ── 에디토리얼 스플릿 ──
+   배경을 bone 으로 두면 흰 배경 제품컷이 네모 박스처럼 떠 보인다. 흰 바탕으로 통일. */
+.sk-split{background:var(--paper);display:grid;grid-template-columns:1fr 1fr;align-items:center}
+.sk-split .sk-pic{aspect-ratio:1/1;overflow:hidden}
+.sk-split .sk-pic img{width:100%;height:100%;object-fit:cover;display:block}
+.sk-split .sk-say{padding:clamp(32px,6vw,96px)}
+.sk-split .sk-eyebrow{color:var(--warm-mute);margin:0 0 22px}
+.sk-split h3{font-size:clamp(32px,4.6vw,66px);margin:0 0 24px}
+.sk-split p{max-width:34ch;color:var(--warm-mute);font-size:14px;line-height:1.9;letter-spacing:-.01em;margin:0}
+.sk-split .sk-go{display:inline-block;margin-top:32px;border-bottom:1px solid var(--ink);
+  padding-bottom:4px;color:inherit;text-decoration:none}
+
+/* ── 로드 모션 ── */
+.sk-rise{opacity:0;transform:translateY(18px);animation:sk-rise .95s cubic-bezier(.2,.7,.3,1) forwards}
+.sk-rise-2{animation-delay:.14s}
+@keyframes sk-rise{to{opacity:1;transform:none}}
+
+@media (max-width:820px){
+  /* 히어로는 자라식으로 화면 끝까지 흘린다 */
+  .sk-hero{display:block;padding:0 0 clamp(48px,11vw,64px)}
+  .sk-hero-a .sk-shot{aspect-ratio:3/4}
+  .sk-hero-a .sk-cap{margin:12px var(--sk-pad) 0}
+  .sk-hero-b{transform:none;margin:52px var(--sk-pad) 0;width:72%}
+
+  .sk-grid{grid-template-columns:repeat(2,1fr)}
+  /* 2단에선 한 줄에 이름+가격이 안 들어간다. align-items 를 건드리면
+     자식이 max-content 폭이 돼 줄바꿈을 안 하므로 stretch 그대로 둔다. */
+  .sk-meta{flex-direction:column;gap:6px}
+
+  .sk-split{grid-template-columns:1fr}
 }
-.sik-hero-ghost {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(108%, 560px);
-  height: auto;
-  opacity: 0;
-  pointer-events: none;
-  animation: sik-ghost-in 1.1s cubic-bezier(.2,.7,.3,1) .1s both;
-}
-.sik-hero-stage {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 200px;
-}
-.sik-hero-icons {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(18px, 2.6vw, 38px);
-  flex-wrap: nowrap;
-}
-.sik-hero-icon {
-  opacity: 0;
-  transition: transform .9s cubic-bezier(.55,0,.2,1), opacity .55s ease;
-  will-change: transform, opacity;
-}
-.sik-hero-icon-img {
-  display: block;
-  height: clamp(34px, 4vw, 52px);
-  width: auto;
-  animation: sik-float 6s ease-in-out infinite;
-}
-.sik-hero-muscle {
-  position: absolute;
-  top: 50%; left: 50%;
-  z-index: 2;
-  height: clamp(116px, 15vw, 188px);
-  width: auto;
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(.55);
-  transition: transform .8s cubic-bezier(.34,1.45,.5,1) .12s, opacity .5s ease .12s;
-  pointer-events: none;
-}
-@keyframes sik-ghost-in {
-  from { opacity: 0; transform: translate(-50%, -46%); }
-  to   { opacity: .09; transform: translate(-50%, -50%); }
-}
-@keyframes sik-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sik-hero-ghost { animation: none; opacity: .09; }
-  .sik-hero-icon  { transition: none; opacity: 1 !important; transform: none !important; }
-  .sik-hero-icon-img { animation: none; }
-  .sik-hero-muscle { display: none; }
+@media (prefers-reduced-motion:reduce){
+  .sk-rise{animation:none;opacity:1;transform:none}
+  .sk-card img{transition:none}
 }
 `;
 
 function HomePage({ nav, openProduct }) {
-  const { NavBar, Footer, Button } = window.SIKDesignSystem_7bbf7d;
-  const { Editorial, PageWrap } = window;
-  const allP = window.SIK_DATA.products;
-  const product = allP.find((p) => p.id === "blackpoint-necklace") || allP[0];
-  const footerCols = window.SIK_FOOTER;
-  const L = window.SIK_LOGO;
-  const IMG = window.SIK_PRODUCT_IMG;
-  const ICONS = window.SIK_ICONS;
-  const MUSCLE = window.SIK_MUSCLE;
-  const NAV = ["All", ...window.SIK_CATEGORIES, "About"];
-  const won = (n) => "KRW " + n.toLocaleString("en-US");
+  const { SikHeader, SikFooter } = window;
+  const P = window.SIK_DATA.products;
+  const won = (n) => "₩" + n.toLocaleString("en-US");
 
-  // The brand's 5 line-icons, white variant for the ink hero.
-  const heroIcons = [
-    { key: "head", alt: "Brand" },
-    { key: "dumbbell", alt: "Gym" },
-    { key: "necklace", alt: "Necklaces" },
-    { key: "tshirt", alt: "Apparel" },
-    { key: "hanger", alt: "Lookbook" },
-  ];
+  // 히어로 두 컷 — 크게 한 장, 작게 한 장. 없으면 조용히 건너뛴다.
+  const heroA = P.find((p) => p.id === "semicrop-tee") || P[0];
+  const heroB = P.find((p) => p.id === "mesh-shirt") || P[1];
 
-  // ── Merge effect: the 5 icons periodically converge into the muscle mark ──
-  const stageRef = React.useRef(null);
-  const iconRefs = React.useRef([]);
-  const [entered, setEntered] = React.useState(false);
-  const [merged, setMerged] = React.useState(false);
-  const [deltas, setDeltas] = React.useState(() => heroIcons.map(() => ({ x: 0, y: 0 })));
+  // 스플릿에 세울 제품 (EP.2 목걸이)
+  const feature = P.find((p) => p.id === "blackpoint-necklace") || P[0];
+  const featureFlat = feature.frontImage || feature.image;
 
-  const measure = React.useCallback(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    const sr = stage.getBoundingClientRect();
-    const cx = sr.left + sr.width / 2;
-    const cy = sr.top + sr.height / 2;
-    setDeltas(iconRefs.current.map((el) => {
-      if (!el) return { x: 0, y: 0 };
-      const r = el.getBoundingClientRect();
-      return { x: cx - (r.left + r.width / 2), y: cy - (r.top + r.height / 2) };
-    }));
-  }, []);
-
-  // Entrance: stagger the icons up, once.
-  React.useEffect(() => {
-    measure();
-    const t = setTimeout(() => setEntered(true), 80);
-    window.addEventListener("resize", measure);
-    return () => { clearTimeout(t); window.removeEventListener("resize", measure); };
-  }, [measure]);
-
-  // Loop: spread → merge into muscle → hold → spread, on a calm cadence.
-  React.useEffect(() => {
-    if (!entered) return;
-    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-    let unmerge, iv;
-    const cycle = () => {
-      measure();          // capture spread positions just before converging
-      setMerged(true);
-      unmerge = setTimeout(() => setMerged(false), 2600);
-    };
-    const start = setTimeout(() => {
-      cycle();
-      iv = setInterval(cycle, 7000);
-    }, 2600);
-    return () => { clearTimeout(start); clearInterval(iv); clearTimeout(unmerge); };
-  }, [entered, measure]);
-
-  const iconStyle = (i) => {
-    if (!entered) return { opacity: 0, transform: "translateY(16px) scale(1)", transitionDelay: (i * 0.08) + "s" };
-    if (merged) return { opacity: 0, transform: `translate(${deltas[i].x}px, ${deltas[i].y}px) scale(.18)`, transitionDelay: "0s" };
-    return { opacity: 1, transform: "translate(0,0) scale(1)", transitionDelay: (i * 0.05) + "s" };
-  };
+  const open = (id) => (e) => { e.preventDefault(); openProduct(id); };
 
   return (
     <div style={{ background: "var(--paper)" }}>
-      <style>{HERO_CSS}</style>
-      <NavBar active={null} links={NAV} bagCount={2} onNavClick={nav} onLogoClick={() => nav("home")} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
+      <style>{HOME_CSS}</style>
+      <SikHeader nav={nav} active={null} />
 
-      {/* Full-width ink campaign panel — copy left, brand-mark art right */}
-      <div style={{ background: "var(--ink)" }}>
-        <PageWrap style={{ minHeight: "clamp(440px, 60vh, 620px)", display: "flex", alignItems: "center", gap: "clamp(40px, 5vw, 88px)", flexWrap: "wrap", padding: "clamp(56px,8vh,104px) var(--gutter-page)" }}>
-          <div style={{ flex: "1 1 440px", minWidth: 280 }}>
-            <div className="sik-kicker" style={{ color: "var(--on-ink-mute)", marginBottom: 20 }}>SS Collection</div>
-            <h1 className="sik-display" style={{ color: "var(--on-ink)", fontSize: "clamp(56px, 7.5vw, 116px)" }}>Fashion Psick</h1>
-            <p style={{ color: "var(--on-ink)", fontSize: 17, fontWeight: 500, marginTop: 22, maxWidth: 420 }}>운동과 일상의 경계 없이. 오늘의 무드를 완성하는 SIK.</p>
-            <div style={{ marginTop: 32 }}>
-              <Button variant="onImage" size="lg" onClick={() => nav("Tops")}>Shop the collection</Button>
-            </div>
-          </div>
+      <section className="sk-hero">
+        <figure className="sk-hero-a sk-rise">
+          <a href="#" className="sk-shot" style={{ display: "block" }} onClick={open(heroA.id)}>
+            <img src={heroA.image} alt={heroA.name} />
+          </a>
+          <figcaption className="sk-cap sk-hair-sm">{heroA.subtitle || heroA.name}</figcaption>
+        </figure>
+        <figure className="sk-hero-b sk-rise sk-rise-2">
+          <a href="#" className="sk-shot" style={{ display: "block" }} onClick={open(heroB.id)}>
+            <img src={heroB.image} alt={heroB.name} />
+          </a>
+          <figcaption className="sk-cap sk-hair-sm">{heroB.subtitle || heroB.name}</figcaption>
+        </figure>
+      </section>
 
-          {/* Brand-mark art: 5 line-icons that merge into the muscle mark */}
-          <div className="sik-hero-art" style={{ flex: "1 1 360px", minWidth: 260 }}>
-            <img className="sik-hero-ghost" src={L.dark} alt="" aria-hidden="true" />
-            <div className="sik-hero-stage" ref={stageRef}>
-              <div className="sik-hero-icons">
-                {heroIcons.map((it, i) => (
-                  <div
-                    key={it.key}
-                    ref={(el) => (iconRefs.current[i] = el)}
-                    className="sik-hero-icon"
-                    style={iconStyle(i)}
-                  >
-                    <img className="sik-hero-icon-img" src={ICONS[it.key] + "-w.png"} alt={it.alt} style={{ animationDelay: (i * 0.55) + "s" }} />
-                  </div>
-                ))}
+      <section className="sk-sign sk-ser">
+        <a className="sk-handle" href={window.SIK_INSTAGRAM} target="_blank" rel="noreferrer">
+          {window.SIK_HANDLE}
+        </a>
+        <p>{window.SIK_HANDLE_SUB}</p>
+      </section>
+
+      <section className="sk-grid-sec">
+        <div className="sk-sec-head">
+          <h2 className="sk-hair">NEW IN</h2>
+          <span className="sk-count sk-hair-sm sk-num">{String(P.length).padStart(2, "0")}</span>
+        </div>
+        <div className="sk-grid">
+          {P.map((p) => (
+            <a key={p.id} className="sk-card" href="#" onClick={open(p.id)}>
+              <div className="sk-shot"><img src={p.image} alt={p.name} loading="lazy" /></div>
+              <div className="sk-meta sk-hair-sm">
+                <span className="sk-name">{p.name}</span>
+                <span className="sk-price sk-num">{won(p.price)}</span>
               </div>
-              <img
-                className="sik-hero-muscle"
-                src={MUSCLE.light}
-                alt="SIK"
-                style={{ opacity: merged ? 1 : 0, transform: merged ? "translate(-50%,-50%) scale(1)" : "translate(-50%,-50%) scale(.55)" }}
-              />
-            </div>
-          </div>
-        </PageWrap>
-      </div>
-
-      {/* Shop — 전 제품 그리드 (ALL 과 동일) */}
-      <PageWrap style={{ paddingTop: "var(--space-4xl)", paddingBottom: "var(--space-5xl)" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: "var(--space-2xl)" }}>
-          <img src={MUSCLE.dark} alt="" style={{ height: 40, width: "auto" }} />
-          <div className="sik-kicker">Shop All</div>
+            </a>
+          ))}
         </div>
-        <div className="sik-plp" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "var(--space-2xl) var(--space-lg)" }}>
-          {allP.map((p) => <window.ProductTile key={p.id} p={p} onOpen={openProduct} />)}
+      </section>
+
+      <section className="sk-split">
+        <a className="sk-pic" href="#" onClick={open(feature.id)}>
+          <img src={featureFlat} alt={feature.name} />
+        </a>
+        <div className="sk-say">
+          <p className="sk-eyebrow sk-hair-sm">EPISODE 02</p>
+          <h3 className="sk-disp">black pearl</h3>
+          <p>{feature.blurb}</p>
+          <a className="sk-go sk-ser sk-cap-track" href="#" onClick={open(feature.id)}>VIEW PRODUCT</a>
         </div>
-      </PageWrap>
+      </section>
 
-      {/* Editorial brand band */}
-      <PageWrap style={{ paddingBottom: "var(--space-5xl)" }}>
-        <Editorial
-          className="sik-ed-band"
-          ratio="16 / 6"
-          tone="#111"
-          kicker="The brand"
-          headline="FASHIONPSICK"
-          cta="Our story"
-          onCta={() => nav("About")}
-          art={
-            <div
-              className="sik-ed-signature"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "clamp(20px, 4vw, 56px)",
-                padding: "clamp(40px, 16%, 120px) var(--gutter-page) 0",
-              }}
-            >
-              {heroIcons.map((it) => (
-                <img
-                  key={it.key}
-                  src={ICONS[it.key] + "-w.png"}
-                  alt={it.alt}
-                  style={{ height: "clamp(28px, 4.4vw, 54px)", width: "auto", opacity: 0.92 }}
-                />
-              ))}
-            </div>
-          }
-        />
-      </PageWrap>
-
-      <Footer columns={footerCols} logoSrc={L.light} linkHref={window.SIK_INSTAGRAM} />
+      <SikFooter nav={nav} />
     </div>
   );
 }

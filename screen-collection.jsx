@@ -57,45 +57,36 @@ function ProductTile({ p, onOpen }) {
 window.ProductTile = ProductTile;
 
 function CollectionPage({ nav, openProduct, category }) {
-  const { NavBar, Footer } = window.SIKDesignSystem_7bbf7d;
-  const { PageWrap } = window;
-  const P = window.SIK_DATA.products;
-  const footerCols = window.SIK_FOOTER;
-  const L = window.SIK_LOGO;
-  const CATS = window.SIK_CATEGORIES;
-  const NAV = ["All", ...CATS, "About"];
-
-  const active = CATS.includes(category) ? category : "All";
-  const items = active === "All" ? P : P.filter((p) => p.cat === active);
+  const { PageWrap, SikHeader, SikFooter } = window;
+  const keys = window.SIK_NAV.map((n) => n.key);
+  const active = keys.includes(category) ? category : "All";
+  const items = window.SIK_FILTER(active);
 
   return (
     <div style={{ background: "var(--paper)" }}>
-      <NavBar active={active} links={NAV} bagCount={2} onNavClick={nav} onLogoClick={() => nav("home")} logoSrc={L.light} utility={window.SIK_UTILITY} utilityHref={window.SIK_INSTAGRAM} />
-
-      {/* Sub-nav strip */}
-      <div style={{ boxShadow: "var(--shadow-sticky-edge)" }}>
-        <PageWrap>
-          <div style={{ display: "flex", alignItems: "center", height: 52, gap: 16 }}>
-            <a href="#" onClick={(e) => { e.preventDefault(); nav("home"); }} style={{ fontSize: 13, color: "var(--mute)", textDecoration: "none" }}>Home</a>
-            {["All", ...CATS].map((c) => (
-              <a key={c} href="#" onClick={(e) => { e.preventDefault(); nav(c); }}
-                 style={{ fontSize: 13, textDecoration: "none", color: c === active ? "var(--ink)" : "var(--mute)", fontWeight: c === active ? 600 : 400 }}>{c}</a>
-            ))}
-          </div>
-        </PageWrap>
-      </div>
+      <SikHeader nav={nav} active={active} />
 
       <PageWrap style={{ paddingTop: "var(--space-3xl)", paddingBottom: "var(--space-5xl)" }}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "var(--space-2xl)" }}>
-          <h1 className="sik-heading-xl" style={{ fontSize: 28 }}>{active}</h1>
-          <span style={{ fontSize: 13, color: "var(--mute)" }}>{items.length} item{items.length > 1 ? "s" : ""}</span>
+          <h1 className="sk-hair">{window.SIK_NAV_LABEL(active)}</h1>
+          <span className="sk-hair-sm sk-num" style={{ color: "var(--warm-mute)" }}>
+            {String(items.length).padStart(2, "0")}
+          </span>
         </div>
-        <div className="sik-plp" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "var(--space-2xl) var(--space-lg)" }}>
-          {items.map((p) => <ProductTile key={p.id} p={p} onOpen={openProduct} />)}
-        </div>
+
+        {items.length === 0 ? (
+          /* BOTTOM 처럼 아직 취급 제품이 없는 카테고리 — 빈 화면 대신 안내 */
+          <p className="sk-ser" style={{ color: "var(--warm-mute)", fontSize: 17, padding: "clamp(48px,10vw,120px) 0", textAlign: "center" }}>
+            준비 중입니다.
+          </p>
+        ) : (
+          <div className="sik-plp" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "var(--space-2xl) var(--space-lg)" }}>
+            {items.map((p) => <ProductTile key={p.id} p={p} onOpen={openProduct} />)}
+          </div>
+        )}
       </PageWrap>
 
-      <Footer columns={footerCols} logoSrc={L.light} linkHref={window.SIK_INSTAGRAM} />
+      <SikFooter nav={nav} />
     </div>
   );
 }

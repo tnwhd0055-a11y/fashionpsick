@@ -113,10 +113,44 @@
   window.SIK_PRODUCT_IMG = products[1].image;   // 홈 시그니처 = 블랙 포인트 목걸이
   window.SIK_CATEGORIES = ["Tops", "Necklaces", "Accessories"];
 
+  // ── 상단 내비게이션 ────────────────────────────────────────
+  // 화면에 보이는 라벨과 실제 product.cat 이 1:1 이 아니다.
+  //  · BOTTOM  — 아직 취급 제품 없음 (빈 목록 → 컬렉션에서 "준비 중" 안내)
+  //  · BELT    — Accessories 안의 단일 제품이지만 따로 노출
+  //  · 목걸이  — ACCESSORIES 로 묶어서 보여준다
+  window.SIK_NAV = [
+    { key: "All", label: "ALL" },
+    { key: "Tops", label: "TOP" },
+    { key: "Bottoms", label: "BOTTOM" },
+    { key: "Accessories", label: "ACCESSORIES" },
+    { key: "Belt", label: "BELT" },
+  ];
+
+  window.SIK_NAV_LABEL = function (key) {
+    var hit = window.SIK_NAV.filter(function (n) { return n.key === key; })[0];
+    return hit ? hit.label : String(key || "").toUpperCase();
+  };
+
+  window.SIK_FILTER = function (key) {
+    var P = window.SIK_DATA.products;
+    if (!key || key === "All") return P;
+    if (key === "Bottoms") return [];
+    if (key === "Belt") return P.filter(function (p) { return p.id === "western-belt"; });
+    if (key === "Accessories") {
+      return P.filter(function (p) { return p.cat === "Accessories" || p.cat === "Necklaces"; });
+    }
+    return P.filter(function (p) { return p.cat === key; });
+  };
+
+  window.SIK_TAGLINE = "SEOUL, KOREA";
+  window.SIK_HANDLE = "@fashionpsick";
+  window.SIK_HANDLE_SUB = "fitness and fashion";
+
   // Real logo assets (transparent PNG, derived from the brand mark).
+  // 2026-07: 워드마크를 새 로고(sik + 덤벨 마크)로 교체.
   window.SIK_LOGO = {
-    light: "assets/logo-sik-wordmark-black.png",
-    dark: "assets/logo-sik-wordmark-white.png",
+    light: "assets/logo-sik-ink.png",     // 밝은 배경 위
+    dark: "assets/logo-sik-bone.png",     // 어두운 배경 위 (인트로 커튼 등)
     lockupDark: "assets/logo-sik-lockup-white.png",
     lockupLight: "assets/logo-sik-lockup-black.png",
   };

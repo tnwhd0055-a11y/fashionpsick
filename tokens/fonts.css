@@ -30,10 +30,24 @@
 
 /* Anton is loaded via the Google Fonts @import at the top of this file. */
 
+/* Archivo — 로고와 같은 지오메트릭 그로테스크 계열.
+   굵은 소문자는 워드마크의 목소리, 얇은 대문자는 가격·품번 같은 데이터용. */
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;700;800;900&display=swap");
+
+/* EB Garamond — 브랜드 목소리와 내비게이션. 에디토리얼 리디자인(2026-07)에서 도입. */
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&display=swap");
+
 :root {
   /* Family tokens  @kind font */
   --font-sans: "Pretendard Variable", "Pretendard", -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-display: "Anton", "Pretendard Variable", "Helvetica Neue", Arial,
     sans-serif;
+
+  /* 에디토리얼 3종 레지스터 — 섞어 쓰면 워드마크와 싸운다.
+       serif = 브랜드 목소리 · 내비게이션
+       grot  = 가격 · 품번 · 라벨 같은 데이터
+       grot 800 소문자 = 로고와 같은 목소리 (아주 드물게) */
+  --font-serif: "EB Garamond", Garamond, "Times New Roman", serif;
+  --font-grot: "Archivo", "Helvetica Neue", Arial, sans-serif;
 }
