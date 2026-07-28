@@ -22,6 +22,9 @@ const HOME_CSS = `
 
 /* ── 제품 그리드 : 카드 테두리도 배지도 없이, 사진이 프레임을 꽉 채운다 ── */
 .sk-grid-sec{padding:0 var(--sk-pad) clamp(64px,9vw,130px)}
+/* 폭을 한 번 조여서 타일이 너무 커지지 않게 한다. 히어로가 이미 안쪽으로
+   들어와 있어서, 그리드도 같은 여백감을 유지해야 한 페이지로 읽힌다. */
+.sk-grid-inner{max-width:1060px;margin:0 auto}
 .sk-sec-head{display:flex;justify-content:space-between;align-items:baseline;
   padding-bottom:18px;border-bottom:1px solid var(--warm-line);margin-bottom:clamp(28px,4vw,54px)}
 .sk-sec-head h2{margin:0}
@@ -35,36 +38,35 @@ const HOME_CSS = `
 .sk-meta .sk-name{word-break:keep-all}   /* 한글 제품명이 어절 중간에서 끊기지 않게 */
 .sk-meta .sk-price{color:var(--warm-mute);white-space:nowrap}
 
-/* ── 에디토리얼 스플릿 ──
-   배경을 bone 으로 두면 흰 배경 제품컷이 네모 박스처럼 떠 보인다. 흰 바탕으로 통일. */
-.sk-split{background:var(--paper);display:grid;grid-template-columns:1fr 1fr;align-items:center}
-.sk-split .sk-pic{aspect-ratio:1/1;overflow:hidden}
-.sk-split .sk-pic img{width:100%;height:100%;object-fit:cover;display:block}
-.sk-split .sk-say{padding:clamp(32px,6vw,96px)}
-.sk-split .sk-eyebrow{color:var(--warm-mute);margin:0 0 22px}
-.sk-split h3{font-size:clamp(32px,4.6vw,66px);margin:0 0 24px}
-.sk-split p{max-width:34ch;color:var(--warm-mute);font-size:14px;line-height:1.9;letter-spacing:-.01em;margin:0}
-.sk-split .sk-go{display:inline-block;margin-top:32px;border-bottom:1px solid var(--ink);
-  padding-bottom:4px;color:inherit;text-decoration:none}
-
-/* ── 로드 모션 ── */
-.sk-rise{opacity:0;transform:translateY(18px);animation:sk-rise .95s cubic-bezier(.2,.7,.3,1) forwards}
+/* ── 로드 모션 ──
+   정지 상태를 "시작 프레임"으로 두면 안 된다. 애니메이션이 실행되지 않는
+   경우(감속 설정·재렌더 타이밍 등) 요소가 내려간 채로 굳어 레이아웃이 틀어진다.
+   기본값은 항상 최종 위치로 두고, 키프레임 안에서만 시작 상태를 준다. */
+.sk-rise{opacity:1;transform:none;animation:sk-rise .95s cubic-bezier(.2,.7,.3,1) both}
 .sk-rise-2{animation-delay:.14s}
-@keyframes sk-rise{to{opacity:1;transform:none}}
+@keyframes sk-rise{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:none}
+}
 
 @media (max-width:820px){
-  /* 히어로는 자라식으로 화면 끝까지 흘린다 */
-  .sk-hero{display:block;padding:0 0 clamp(48px,11vw,64px)}
+  /* 첫 화면에 사진 두 장이 나란히 떠야 한다. 폭·간격은 레퍼런스 실측값:
+     여백 5.8% | 큰 컷 44.5% | 사이 7.9% | 작은 컷 36.4% | 여백 5.4% */
+  .sk-hero{grid-template-columns:5.8% 44.5% 7.9% 36.4% 5.4%;gap:0;
+    padding:clamp(56px,20vw,96px) 0 clamp(72px,26vw,120px)}
+  .sk-hero-a{grid-column:2}
   .sk-hero-a .sk-shot{aspect-ratio:3/4}
-  .sk-hero-a .sk-cap{margin:12px var(--sk-pad) 0}
-  .sk-hero-b{transform:none;margin:52px var(--sk-pad) 0;width:72%}
+  /* translateY(%) 는 제 높이 기준이라 두 컷 높이가 다르면 어긋난다.
+     레퍼런스처럼 뷰포트 기준 7.1% 만큼 내려야 해서 margin 으로 민다. */
+  .sk-hero-b{grid-column:4;align-self:start;transform:none;margin-top:7.1vw}
+  .sk-hero-b .sk-shot{aspect-ratio:3/4}
+  /* 좁은 칸에 캡션을 넣으면 넘친다. 레퍼런스에도 캡션이 없다. */
+  .sk-hero .sk-cap{display:none}
 
   .sk-grid{grid-template-columns:repeat(2,1fr)}
   /* 2단에선 한 줄에 이름+가격이 안 들어간다. align-items 를 건드리면
      자식이 max-content 폭이 돼 줄바꿈을 안 하므로 stretch 그대로 둔다. */
   .sk-meta{flex-direction:column;gap:6px}
-
-  .sk-split{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
   .sk-rise{animation:none;opacity:1;transform:none}
@@ -80,10 +82,6 @@ function HomePage({ nav, openProduct }) {
   // 히어로 두 컷 — 크게 한 장, 작게 한 장. 없으면 조용히 건너뛴다.
   const heroA = P.find((p) => p.id === "semicrop-tee") || P[0];
   const heroB = P.find((p) => p.id === "mesh-shirt") || P[1];
-
-  // 스플릿에 세울 제품 (EP.2 목걸이)
-  const feature = P.find((p) => p.id === "blackpoint-necklace") || P[0];
-  const featureFlat = feature.frontImage || feature.image;
 
   const open = (id) => (e) => { e.preventDefault(); openProduct(id); };
 
@@ -115,32 +113,22 @@ function HomePage({ nav, openProduct }) {
       </section>
 
       <section className="sk-grid-sec">
-        <div className="sk-sec-head">
-          <h2 className="sk-hair">NEW IN</h2>
-          <span className="sk-count sk-hair-sm sk-num">{String(P.length).padStart(2, "0")}</span>
-        </div>
-        <div className="sk-grid">
-          {P.map((p) => (
-            <a key={p.id} className="sk-card" href="#" onClick={open(p.id)}>
-              <div className="sk-shot"><img src={p.image} alt={p.name} loading="lazy" /></div>
-              <div className="sk-meta sk-hair-sm">
-                <span className="sk-name">{p.name}</span>
-                <span className="sk-price sk-num">{won(p.price)}</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section className="sk-split">
-        <a className="sk-pic" href="#" onClick={open(feature.id)}>
-          <img src={featureFlat} alt={feature.name} />
-        </a>
-        <div className="sk-say">
-          <p className="sk-eyebrow sk-hair-sm">EPISODE 02</p>
-          <h3 className="sk-disp">black pearl</h3>
-          <p>{feature.blurb}</p>
-          <a className="sk-go sk-ser sk-cap-track" href="#" onClick={open(feature.id)}>VIEW PRODUCT</a>
+        <div className="sk-grid-inner">
+          <div className="sk-sec-head">
+            <h2 className="sk-hair">NEW IN</h2>
+            <span className="sk-count sk-hair-sm sk-num">{String(P.length).padStart(2, "0")}</span>
+          </div>
+          <div className="sk-grid">
+            {P.map((p) => (
+              <a key={p.id} className="sk-card" href="#" onClick={open(p.id)}>
+                <div className="sk-shot"><img src={p.image} alt={p.name} loading="lazy" /></div>
+                <div className="sk-meta sk-hair-sm">
+                  <span className="sk-name">{p.name}</span>
+                  <span className="sk-price sk-num">{won(p.price)}</span>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
