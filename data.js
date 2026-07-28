@@ -99,9 +99,11 @@
       subtitle: "Western Belt · Silver",
       price: 24900, badge: "New",
       buy: "https://m.smartstore.naver.com/athleticstore/products/13683518247",
-      image: "assets/belt-1.jpg",
-      frontImage: "assets/belt-2.jpg",
-      gallery: ["assets/belt-1.jpg", "assets/belt-2.jpg", "assets/belt-3.jpg"],
+      // 대표컷은 belt-2(엇갈려 놓은 전체 컷). belt-1 은 버클 클로즈업이라
+      // 3:4 타일에서 잘리면 뭔지 알아볼 수 없어서 뒤로 뺐다.
+      image: "assets/belt-2.jpg",
+      frontImage: "assets/belt-3.jpg",
+      gallery: ["assets/belt-2.jpg", "assets/belt-3.jpg", "assets/belt-1.jpg"],
       swatches: [SW.black],
       detail: "generic",
       spec: [["브랜드", "SIK"], ["제품명", "웨스턴 벨트"], ["컬러", "블랙 (실버 버클)"], ["소재", "인조가죽 · 메탈 버클"], ["사이즈", "총길이 105cm · 폭 2cm · 버클 4.5 x 3.5cm"], ["제조국", "중국"]],
@@ -142,7 +144,7 @@
     return P.filter(function (p) { return p.cat === key; });
   };
 
-  window.SIK_TAGLINE = "SEOUL, KOREA";
+  window.SIK_TAGLINE = "fashion & fitness";
   window.SIK_HANDLE = "@fashionpsick";
   window.SIK_HANDLE_SUB = "fitness and fashion";
 

@@ -88,7 +88,8 @@ function SikHeader({ nav, active }) {
     <React.Fragment>
       <style>{SIK_UI_CSS}</style>
 
-      <p className="sk-rail sk-ser sk-cap-track">{window.SIK_TAGLINE}</p>
+      {/* 소문자 문구라 대문자용 자간(sk-cap-track)은 붙이지 않는다 */}
+      <p className="sk-rail sk-ser">{window.SIK_TAGLINE}</p>
 
       <header className="sk-head">
         <button className="sk-burger" aria-label="메뉴 열기" aria-expanded={open} onClick={() => setOpen(true)}>

@@ -117,14 +117,21 @@ function IntroCurtain({ onDone }) {
   const lift = React.useCallback(() => {
     if (doneRef.current) return;
     doneRef.current = true;
+    // 커튼을 걷는 동안 뒤 페이지가 이미 내려가 있으면 안 된다.
+    window.scrollTo(0, 0);
     setLifted(true);
     window.setTimeout(onDone, 900);
   }, [onDone]);
 
   React.useEffect(() => {
-    const prev = document.body.style.overflow;
+    const html = document.documentElement;
+    const prevBody = document.body.style.overflow;
+    const prevHtml = html.style.overflow;
+    // body 만 잠그면 html 이 대신 스크롤된다. 그래서 커튼을 걷어내면
+    // 홈이 맨 위가 아니라 중간부터 보였다. 둘 다 잠근다.
     document.body.style.overflow = "hidden";
-    window.scrollTo({ top: 0 });
+    html.style.overflow = "hidden";
+    window.scrollTo(0, 0);
 
     const onKey = (e) => {
       if ([" ", "Enter", "ArrowDown", "PageDown", "Escape"].indexOf(e.key) !== -1) { e.preventDefault(); lift(); }
@@ -134,7 +141,10 @@ function IntroCurtain({ onDone }) {
     window.addEventListener("keydown", onKey);
 
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevBody;
+      html.style.overflow = prevHtml;
+      // 잠금을 푸는 순간에도 한 번 더. 커튼이 걷힌 뒤엔 항상 홈 맨 위에서 시작한다.
+      window.scrollTo(0, 0);
       window.removeEventListener("wheel", lift);
       window.removeEventListener("touchmove", lift);
       window.removeEventListener("keydown", onKey);
