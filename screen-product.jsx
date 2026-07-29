@@ -108,7 +108,9 @@ function ProductPage({ nav, openProduct, productId }) {
         </div>
       </PageWrap>
 
-      {product.detail === "stone" ? <StoneDetail /> : <GenericDetail product={product} gallery={gallery} />}
+      {product.detail === "stone" ? <StoneDetail product={product} /> : <GenericDetail product={product} gallery={gallery} />}
+
+      <window.ProductInfoNotice product={product} />
 
       <SikFooter nav={nav} />
     </div>
@@ -155,7 +157,8 @@ function GenericDetail({ product, gallery }) {
           <div style={{ textAlign: "center", padding: "var(--space-4xl) 0" }}>
             <div style={{ ...eyebrow, marginBottom: "var(--space-xl)" }}>Detail</div>
             <dl style={{ display: "inline-grid", gridTemplateColumns: "auto auto", gap: "10px 18px", textAlign: "left", margin: 0 }}>
-              {product.spec.map(([k, v]) => (
+              {/* 제조국은 여기 두지 않는다. 맨 아래 상품정보제공고시로 모았다. */}
+              {product.spec.filter(([k]) => k !== "제조국").map(([k, v]) => (
                 <React.Fragment key={k}>
                   <dt style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, color: "var(--mute)" }}>{k}</dt>
                   <dd style={{ fontFamily: "var(--font-sans)", fontSize: 14, color: "var(--ink)", margin: 0 }}>{v}</dd>
@@ -179,7 +182,7 @@ function GenericDetail({ product, gallery }) {
 }
 
 /* ── 기존 스톤 비즈 목걸이 풀 상세 (원본 유지) ─────────────── */
-function StoneDetail() {
+function StoneDetail({ product }) {
   const A = "assets/";
   const img = { display: "block", width: "100%", height: "auto" };
   const eyebrow = { fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--ink)" };
@@ -205,7 +208,8 @@ function StoneDetail() {
         <div style={{ textAlign: "center", padding: "var(--space-4xl) 0" }}>
           <div style={{ ...eyebrow, marginBottom: "var(--space-xl)" }}>Detail</div>
           <dl style={{ display: "inline-grid", gridTemplateColumns: "auto auto", gap: "10px 18px", textAlign: "left", margin: 0 }}>
-            {[["브랜드", "SIK"], ["제품명", "내추럴 스톤 비즈 목걸이"], ["컬러", "블랙브라운"], ["소재", "내추럴 스톤 비즈"], ["사이즈", "42cm + 연장 체인 5cm"], ["제조국", "외국"]].map(([k, v]) => (
+            {/* 제조국은 여기 두지 않는다. 맨 아래 상품정보제공고시로 모았다. */}
+            {(product.spec || []).filter(([k]) => k !== "제조국").map(([k, v]) => (
               <React.Fragment key={k}>
                 <dt style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, color: "var(--mute)" }}>{k}</dt>
                 <dd style={{ fontFamily: "var(--font-sans)", fontSize: 14, color: "var(--ink)", margin: 0 }}>{v}</dd>

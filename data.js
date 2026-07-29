@@ -26,6 +26,7 @@
       gallery: ["assets/necklace-model.jpg", "assets/necklace-1.png", "assets/necklace-2.png", "assets/necklace-3.png"],
       swatches: [SW.blackbrown], length: "42 cm + 5 cm",
       detail: "stone",
+      spec: [["브랜드", "SIK"], ["제품명", "내추럴 스톤 비즈 목걸이"], ["컬러", "블랙브라운"], ["소재", "내추럴 스톤 비즈"], ["사이즈", "42cm + 연장 체인 5cm"], ["제조국", "확인 중"]],
     },
 
     // 2) 블랙 펄 비즈 목걸이 (신규)
@@ -142,6 +143,19 @@
       return P.filter(function (p) { return p.cat === "Accessories" || p.cat === "Necklaces"; });
     }
     return P.filter(function (p) { return p.cat === key; });
+  };
+
+  // ── 사업자 정보 ────────────────────────────────────────────
+  // 전자상거래법 제10조. 소비자가 볼 수 있는 곳에 표시할 의무가 있다.
+  // 빈 값은 아직 못 받은 항목 — 채워지기 전까진 화면에 줄 자체를 안 그린다.
+  window.SIK_BIZ = {
+    company: "SIK",                              // TODO 사업자등록증상 상호 확인
+    owner: "",                                   // TODO 대표자 성명
+    bizNo: "888-64-00737",
+    mailOrderNo: "",                             // TODO 통신판매업 신고번호
+    address: "서울특별시 서대문구 세무서길 78",
+    tel: "010-3084-8082",
+    host: "GitHub, Inc.",
   };
 
   window.SIK_TAGLINE = "fashion & fitness";

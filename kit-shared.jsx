@@ -53,6 +53,18 @@ const SIK_UI_CSS = `
 .sk-foot-end{display:flex;justify-content:space-between;gap:20px;margin-top:clamp(40px,6vw,80px);
   padding-top:22px;border-top:1px solid var(--warm-line);color:var(--warm-mute)}
 
+/* 상품정보제공고시 — 접이식 작은 글씨. 11px 아래로 내리지 말 것(위 주석 참고). */
+.sk-notice{max-width:760px;margin:0 auto;padding:0 var(--sk-pad) clamp(48px,6vw,80px);
+  font-family:var(--font-sans);font-size:11px;line-height:1.9;color:var(--warm-mute)}
+.sk-notice summary{cursor:pointer;padding:12px 0;border-top:1px solid var(--warm-line);
+  border-bottom:1px solid var(--warm-line);letter-spacing:.02em;list-style:none}
+.sk-notice summary::-webkit-details-marker{display:none}
+.sk-notice summary::after{content:"+";float:right;font-size:13px;line-height:1}
+.sk-notice[open] summary::after{content:"−"}
+.sk-notice dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:16px 0 0}
+.sk-notice dt{font-weight:600}
+.sk-notice dd{margin:0;color:var(--ink);word-break:keep-all}
+
 @media (max-width:820px){
   /* 모바일에선 .sk-nav 가 숨겨져 있어 이 값은 INSTAGRAM 만 쓴다.
      워드마크보다 확실히 작아야 헤더의 주인공이 로고로 읽힌다. */
@@ -125,20 +137,68 @@ function SikHeader({ nav, active }) {
   );
 }
 
+/* 상품정보제공고시 — 상세 맨 아래, 접어둔 작은 글씨.
+   공정위 「전자상거래 등에서의 상품 등의 정보제공에 관한 고시」가 요구하는
+   의류·패션잡화 항목. 국내 쇼핑몰이 다 이 자리에 이 크기로 둔다.
+   다만 "안 보이게" 만들면 안 된다 — 고시는 소비자가 쉽게 확인할 수 있게
+   제공하라고 요구하고, 일부러 읽기 어렵게 하면 그 자체가 위반이다.
+   그래서 푸터 사업자정보와 같은 11px 로 맞췄다. 더 줄이지 말 것. */
+function ProductInfoNotice({ product }) {
+  const B = window.SIK_BIZ;
+  const spec = product.spec || [];
+  const pick = (key, fallback) => {
+    const hit = spec.filter((row) => row[0] === key)[0];
+    return hit && hit[1] ? hit[1] : fallback;
+  };
+  const seller = B.company + (B.tel ? " " + B.tel : "");
+
+  const rows = [
+    ["품명 및 모델명", product.name],
+    ["소재 / 재질", pick("소재", "상세페이지 참조")],
+    ["색상", pick("컬러", "상세페이지 참조")],
+    ["치수", pick("사이즈", product.length || "상세페이지 참조")],
+    ["제조자 / 수입자", B.company],
+    ["제조국", pick("제조국", "확인 중")],
+    ["취급 시 주의사항", "상세페이지 하단 Notice 참조"],
+    ["품질보증기준", "관련 법 및 소비자분쟁해결기준에 따름"],
+    ["A/S 책임자와 전화번호", seller],
+  ];
+
+  return (
+    <details className="sk-notice">
+      <summary>상품정보제공고시</summary>
+      <dl>
+        {rows.map(([k, v]) => (
+          <React.Fragment key={k}>
+            <dt>{k}</dt><dd>{v}</dd>
+          </React.Fragment>
+        ))}
+      </dl>
+    </details>
+  );
+}
+
 function SikFooter({ nav }) {
   const L = window.SIK_LOGO;
   const IG = window.SIK_INSTAGRAM;
+  const BIZ = window.SIK_BIZ;
   const goto = (key) => (e) => { e.preventDefault(); nav(key); };
   return (
     <footer className="sk-foot">
       <div className="sk-foot-grid">
         <div>
           <img className="sk-mark" src={L.light} alt="SIK" />
-          {/* TODO 사업자 정보 — 대표님 확인 후 실제 값으로 교체 (통신판매업 신고번호 포함) */}
+          {/* 아직 못 받은 항목(대표자명·통신판매업 신고번호)은 줄을 아예 안 그린다.
+              "000" 같은 자리표시자를 띄우면 허위 표시로 보일 수 있다. */}
           <p className="sk-biz">
-            상호 SIK · 대표 000 · 사업자등록번호 000-00-00000<br />
-            통신판매업신고 0000-서울00-0000 · 주소 서울특별시<br />
-            고객문의 <a href={IG} target="_blank" rel="noreferrer">instagram @fashionpsick</a>
+            상호 {BIZ.company}
+            {BIZ.owner && <React.Fragment> · 대표 {BIZ.owner}</React.Fragment>}
+            {" · "}사업자등록번호 {BIZ.bizNo}<br />
+            {BIZ.mailOrderNo && <React.Fragment>통신판매업신고 {BIZ.mailOrderNo}<br /></React.Fragment>}
+            주소 {BIZ.address}<br />
+            고객센터 <a href={"tel:" + BIZ.tel.replace(/-/g, "")}>{BIZ.tel}</a>
+            {" · "}호스팅 {BIZ.host}<br />
+            <a href={IG} target="_blank" rel="noreferrer">instagram @fashionpsick</a>
           </p>
         </div>
         <div>
@@ -339,4 +399,4 @@ function PageWrap({ children, style = {} }) {
   );
 }
 
-Object.assign(window, { Studio, Editorial, SectionHead, PageWrap, BrandIcons, SikHeader, SikFooter });
+Object.assign(window, { Studio, Editorial, SectionHead, PageWrap, BrandIcons, SikHeader, SikFooter, ProductInfoNotice });
