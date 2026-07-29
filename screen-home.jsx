@@ -6,7 +6,7 @@ const HOME_CSS = `
 /* ── 히어로 : 사진 두 장만 여백 위에 비대칭으로 띄운다. 헤드라인 없음 ── */
 .sk-hero{display:grid;grid-template-columns:repeat(12,1fr);gap:0 24px;
   padding:clamp(56px,8vw,120px) var(--sk-pad) clamp(56px,7vw,110px)}
-.sk-shot{background:var(--bone);overflow:hidden}
+.sk-shot{position:relative;background:var(--bone);overflow:hidden}
 .sk-shot img{width:100%;height:100%;object-fit:cover;display:block}
 .sk-cap{margin-top:14px;padding-top:10px;border-top:1px solid var(--warm-line);color:var(--warm-mute)}
 .sk-hero-a{grid-column:3/7;margin:0}
@@ -120,8 +120,11 @@ function HomePage({ nav, openProduct }) {
           </div>
           <div className="sk-grid">
             {P.map((p) => (
-              <a key={p.id} className="sk-card" href="#" onClick={open(p.id)}>
-                <div className="sk-shot"><img src={p.image} alt={p.name} loading="lazy" /></div>
+              <a key={p.id} className={"sk-card" + (p.soldOut ? " is-sold" : "")} href="#" onClick={open(p.id)}>
+                <div className="sk-shot">
+                  <img src={p.image} alt={p.name} loading="lazy" />
+                  {p.soldOut && <span className="sk-sold">일시 품절</span>}
+                </div>
                 <div className="sk-meta sk-hair-sm">
                   <span className="sk-name">{p.name}</span>
                   <span className="sk-price sk-num">{won(p.price)}</span>

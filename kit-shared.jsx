@@ -53,6 +53,13 @@ const SIK_UI_CSS = `
 .sk-foot-end{display:flex;justify-content:space-between;gap:20px;margin-top:clamp(40px,6vw,80px);
   padding-top:22px;border-top:1px solid var(--warm-line);color:var(--warm-mute)}
 
+/* 품절 표시 — 사진 위 왼쪽 아래 칩. 한글이라 대문자용 넓은 자간은 안 쓴다. */
+.sk-sold{position:absolute;left:0;bottom:0;z-index:1;background:var(--paper);color:var(--ink);
+  padding:7px 11px;font-family:var(--font-sans);font-size:11px;font-weight:600;
+  letter-spacing:.02em;line-height:1;pointer-events:none}
+.is-sold img{opacity:.72}
+.is-sold:hover img{transform:none}
+
 /* 상품정보제공고시 — 접이식 작은 글씨. 11px 아래로 내리지 말 것(위 주석 참고). */
 .sk-notice{max-width:760px;margin:0 auto;padding:0 var(--sk-pad) clamp(48px,6vw,80px);
   font-family:var(--font-sans);font-size:11px;line-height:1.9;color:var(--warm-mute)}

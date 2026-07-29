@@ -87,11 +87,22 @@ function ProductPage({ nav, openProduct, productId }) {
             )}
 
             <div style={{ display: "flex", gap: "var(--space-sm)", marginTop: "var(--space-2xl)" }}>
-              <Button as="a" href={product.buy || window.SIK_SMARTSTORE} target="_blank" rel="noopener noreferrer" variant="primary" size="lg" fullWidth style={{ fontSize: 17 }}>네이버에서 구매하기</Button>
+              {/* 품절이면 구매 동선을 아예 막는다. 링크만 남겨두면
+                  스마트스토어에서 결제가 되어 못 보내는 주문이 들어온다. */}
+              {product.soldOut ? (
+                <button disabled style={{
+                  flex: 1, height: 56, border: "1px solid var(--hairline)", background: "var(--soft-cloud)",
+                  color: "var(--stone)", fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 600, cursor: "not-allowed",
+                }}>일시 품절</button>
+              ) : (
+                <Button as="a" href={product.buy || window.SIK_SMARTSTORE} target="_blank" rel="noopener noreferrer" variant="primary" size="lg" fullWidth style={{ fontSize: 17 }}>네이버에서 구매하기</Button>
+              )}
               <IconButton label="Wishlist" variant="outline" size={56}>{heart}</IconButton>
             </div>
             <div style={{ fontSize: 12, color: "var(--mute)", marginTop: "var(--space-md)" }}>
-              결제는 네이버페이 · 스마트스토어로 연결됩니다.
+              {product.soldOut
+                ? <React.Fragment>재입고되면 인스타그램 <a href={window.SIK_INSTAGRAM} target="_blank" rel="noreferrer">@fashionpsick</a> 으로 안내드립니다.</React.Fragment>
+                : "결제는 네이버페이 · 스마트스토어로 연결됩니다."}
             </div>
 
             {product.blurb && (

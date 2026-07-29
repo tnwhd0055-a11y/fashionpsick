@@ -33,6 +33,7 @@ function ProductTile({ p, onOpen }) {
   return (
     <a href="#" onClick={(e) => { e.preventDefault(); onOpen(p.id); }}
        onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+       className={p.soldOut ? "is-sold" : undefined}
        style={{ display: "block", textDecoration: "none", color: "inherit" }}>
       {/* 카테고리 아이콘 — 사진 바로 위 컴팩트 (왼쪽) */}
       <div style={{ display: "flex", justifyContent: "flex-start", paddingBottom: 6 }}>
@@ -41,6 +42,7 @@ function ProductTile({ p, onOpen }) {
       <div style={{ position: "relative", aspectRatio: "4 / 5", background: "var(--soft-cloud)", overflow: "hidden" }}>
         <img src={p.image} alt={p.name} loading="lazy" style={imgStyle(!hover)} />
         <img src={hoverImg} alt="" loading="lazy" style={imgStyle(hover)} />
+        {p.soldOut && <span className="sk-sold">일시 품절</span>}
       </div>
       <div style={{ paddingTop: 10, display: "flex", flexDirection: "column", gap: 4, textAlign: "left" }}>
         {(p.swatches || []).length > 0 && (
