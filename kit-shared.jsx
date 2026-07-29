@@ -11,7 +11,7 @@
    클래스는 기존 .sik-* 와 부딪히지 않게 .sk-* 를 쓴다.
    ============================================================ */
 const SIK_UI_CSS = `
-:root{ --sk-pad:clamp(20px,4.5vw,68px); --sk-nav:clamp(15px,1.35vw,19px); --sk-tag:clamp(13px,1.1vw,16px); }
+:root{ --sk-pad:clamp(20px,4.5vw,68px); --sk-nav:clamp(12px,1.05vw,15px); --sk-tag:clamp(12px,1vw,14px); }
 
 .sk-ser{font-family:var(--font-serif);font-weight:400;letter-spacing:.01em;line-height:1.3}
 .sk-cap-track{letter-spacing:.045em}
@@ -54,9 +54,12 @@ const SIK_UI_CSS = `
   padding-top:22px;border-top:1px solid var(--warm-line);color:var(--warm-mute)}
 
 @media (max-width:820px){
+  /* 모바일에선 .sk-nav 가 숨겨져 있어 이 값은 INSTAGRAM 만 쓴다.
+     워드마크보다 확실히 작아야 헤더의 주인공이 로고로 읽힌다. */
+  :root{ --sk-nav:11px; }
   .sk-head{grid-template-columns:1fr auto 1fr;gap:0;padding:15px var(--sk-pad)}
-  .sk-burger{display:flex;justify-self:start}
-  .sk-head .sk-mark{justify-self:center;height:24px}
+  .sk-burger{display:flex;justify-self:start;width:22px;gap:5px}
+  .sk-head .sk-mark{justify-self:center;height:20px}
   .sk-nav{display:none}
   .sk-foot-grid{grid-template-columns:1fr 1fr;gap:34px}
   .sk-foot-grid>:first-child{grid-column:1/-1}
