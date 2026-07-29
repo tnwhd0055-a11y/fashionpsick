@@ -90,6 +90,7 @@
       gallery: ["assets/tee-2pack-collage.jpg", "assets/tee-black-model.jpg", "assets/tee-grey-model.jpg", "assets/tee-black-flat.jpg", "assets/tee-grey-flat.jpg"],
       swatches: [SW.black, SW.lightgrey],
       detail: "generic",
+      soldOut: true,   // 낱개 티셔츠가 아직 안 와서 2팩도 못 보낸다. 입고되면 이 줄만 지운다.
       spec: [["브랜드", "SIK"], ["구성", "세미크롭 반팔 티셔츠 블랙 1 + 라이트 그레이 1"], ["소재", "코튼 혼방"], ["핏", "세미크롭 · 머슬핏"], ["사이즈", "준비 중 (곧 업데이트)"], ["제조국", "중국"]],
       blurb: "블랙과 라이트 그레이 두 컬러를 함께 구성한 2팩. 낱개로 사는 것보다 합리적입니다.",
     },
@@ -150,11 +151,14 @@
   // 전자상거래법 제10조. 소비자가 볼 수 있는 곳에 표시할 의무가 있다.
   // 빈 값은 아직 못 받은 항목 — 채워지기 전까진 화면에 줄 자체를 안 그린다.
   window.SIK_BIZ = {
-    company: "SIK",                              // TODO 사업자등록증상 상호 확인
+    company: "피식푸드",                          // 사업자등록증상 상호 (브랜드명 SIK 와 다르다)
     owner: "",                                   // TODO 대표자 성명
     bizNo: "888-64-00737",
-    mailOrderNo: "",                             // TODO 통신판매업 신고번호
-    address: "서울특별시 서대문구 세무서길 78",
+    // 간이과세자는 통신판매업 신고 의무가 면제된다 (전자상거래법 시행령 제6조 제2호).
+    // 매출이 늘어 일반과세자로 전환되면 신고하고 번호를 mailOrderNo 에 적어야 한다.
+    mailOrderNo: "",
+    mailOrderExempt: "간이과세자 (전자상거래법 시행령 제6조에 따른 신고 면제)",
+    address: "(03625) 서울특별시 서대문구 세무서길 78, 302호",
     tel: "010-3084-8082",
     host: "GitHub, Inc.",
   };

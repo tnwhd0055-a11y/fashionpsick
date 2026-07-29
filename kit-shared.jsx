@@ -201,7 +201,11 @@ function SikFooter({ nav }) {
             상호 {BIZ.company}
             {BIZ.owner && <React.Fragment> · 대표 {BIZ.owner}</React.Fragment>}
             {" · "}사업자등록번호 {BIZ.bizNo}<br />
-            {BIZ.mailOrderNo && <React.Fragment>통신판매업신고 {BIZ.mailOrderNo}<br /></React.Fragment>}
+            {BIZ.mailOrderNo
+              ? <React.Fragment>통신판매업신고 {BIZ.mailOrderNo}<br /></React.Fragment>
+              : BIZ.mailOrderExempt
+                ? <React.Fragment>통신판매업신고 {BIZ.mailOrderExempt}<br /></React.Fragment>
+                : null}
             주소 {BIZ.address}<br />
             고객센터 <a href={"tel:" + BIZ.tel.replace(/-/g, "")}>{BIZ.tel}</a>
             {" · "}호스팅 {BIZ.host}<br />
