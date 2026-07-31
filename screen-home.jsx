@@ -35,8 +35,14 @@ const HOME_CSS = `
 .sk-card img{transition:transform .8s cubic-bezier(.2,.7,.3,1)}
 .sk-card:hover img{transform:scale(1.035)}
 .sk-meta{display:flex;justify-content:space-between;gap:14px;margin-top:16px;align-items:baseline}
+/* .sk-hair-sm 의 넓은 자간(.22em)은 'NEW IN' 같은 영문 대문자 라벨용이다.
+   한글 제품명에 그대로 걸면 글자가 뚝뚝 떨어져 읽기 힘들다 → 본문 자간으로 되돌린다.
+   크기도 10px 은 한글엔 너무 작아 12px 로 올렸다(자간이 줄어든 만큼 폭은 그대로). */
+.sk-meta .sk-name,.sk-meta .sk-price{font-size:12px;letter-spacing:0}
 .sk-meta .sk-name{word-break:keep-all}   /* 한글 제품명이 어절 중간에서 끊기지 않게 */
 .sk-meta .sk-price{color:var(--warm-mute);white-space:nowrap}
+/* 히어로 캡션도 라벨이 아니라 읽는 문장이라 자간을 좁힌다 */
+.sk-hero .sk-cap{font-size:11px;letter-spacing:.02em}
 
 /* ── 로드 모션 ──
    정지 상태를 "시작 프레임"으로 두면 안 된다. 애니메이션이 실행되지 않는
