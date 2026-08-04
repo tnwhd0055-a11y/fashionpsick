@@ -51,6 +51,7 @@
       name: "델토이드 메쉬 반팔 셔츠",
       subtitle: "Deltoid Mesh Short-Sleeve Shirt · Ivory",
       price: 29900, compareAt: 49000, badge: "New",
+      buy: "https://m.smartstore.naver.com/athleticstore/products/13697953747",
       image: "assets/mesh-model.jpg",
       frontImage: "assets/mesh-front.jpg",
       gallery: ["assets/mesh-model.jpg", "assets/mesh-closeup.jpg", "assets/mesh-back.jpg", "assets/mesh-front.jpg"],
