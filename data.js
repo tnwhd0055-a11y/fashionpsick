@@ -29,34 +29,34 @@
       spec: [["브랜드", "SIK"], ["제품명", "내추럴 스톤 비즈 목걸이"], ["컬러", "블랙브라운"], ["소재", "내추럴 스톤 비즈"], ["사이즈", "42cm + 연장 체인 5cm"], ["제조국", "중국"]],
     },
 
-    // 2) 블랙 펄 비즈 목걸이 (신규)
+    // 2) 플라티즈마 블랙 비즈 목걸이 (구 'EP.2 블랙 펄 비즈 목걸이')
     {
       id: "blackpoint-necklace", cat: "Necklaces",
-      name: "EP.2 블랙 펄 비즈 목걸이",
-      subtitle: "Black Pearl Beaded Necklace · Black",
-      price: 23900, compareAt: 29900, badge: "New",
+      name: "플라티즈마 블랙 비즈 목걸이",
+      subtitle: "Platysma Black Beaded Necklace · Black",
+      price: 19000, compareAt: 29900, badge: "New",
       buy: "https://m.smartstore.naver.com/athleticstore/products/13683518219",
       image: "assets/blackpoint-worn.jpg",
       frontImage: "assets/blackpoint-front.jpg",
       gallery: ["assets/blackpoint-worn.jpg", "assets/blackpoint-full.jpg", "assets/blackpoint-front.jpg", "assets/blackpoint-clasp.jpg"],
       swatches: [SW.black], length: "43 cm + 5 cm",
       detail: "generic",
-      spec: [["브랜드", "SIK"], ["제품명", "EP.2 블랙 펄 비즈 목걸이"], ["컬러", "블랙"], ["소재", "블랙 시드비즈 · 담수진주 · 스테인리스 클래스프"], ["사이즈", "43cm + 연장 체인 5cm"], ["제조국", "중국"]],
+      spec: [["브랜드", "SIK"], ["제품명", "플라티즈마 블랙 비즈 목걸이"], ["컬러", "블랙"], ["소재", "블랙 시드비즈 · 담수진주 · 스테인리스 클래스프"], ["사이즈", "43cm + 연장 체인 5cm"], ["제조국", "중국"]],
       blurb: "블랙 시드비즈에 담수진주와 포인트 비즈를 더한 데일리 목걸이. 단독으로도, 레이어드로도 잘 어울립니다.",
     },
 
-    // 3) 메쉬 반팔 셔츠 (신규)
+    // 3) 델토이드 메쉬 반팔 셔츠 (구 '메쉬 반팔 셔츠')
     {
       id: "mesh-shirt", cat: "Tops",
-      name: "메쉬 반팔 셔츠",
-      subtitle: "Mesh Short-Sleeve Shirt · Ivory",
-      price: 34900, compareAt: 49000, badge: "New",
+      name: "델토이드 메쉬 반팔 셔츠",
+      subtitle: "Deltoid Mesh Short-Sleeve Shirt · Ivory",
+      price: 29900, compareAt: 49000, badge: "New",
       image: "assets/mesh-model.jpg",
       frontImage: "assets/mesh-front.jpg",
       gallery: ["assets/mesh-model.jpg", "assets/mesh-closeup.jpg", "assets/mesh-back.jpg", "assets/mesh-front.jpg"],
       swatches: [SW.ivory],
       detail: "generic",
-      spec: [["브랜드", "SIK"], ["제품명", "메쉬 반팔 셔츠"], ["컬러", "아이보리"], ["소재", "폴리 메쉬 혼방"], ["사이즈", "준비 중 (곧 업데이트)"], ["제조국", "중국"]],
+      spec: [["브랜드", "SIK"], ["제품명", "델토이드 메쉬 반팔 셔츠"], ["컬러", "아이보리"], ["소재", "폴리 메쉬 혼방"], ["사이즈", "준비 중 (곧 업데이트)"], ["제조국", "중국"]],
       blurb: "통기성 좋은 메쉬 소재의 반팔 셔츠. 여름철 데일리와 레이어드에 모두 활용하기 좋습니다.",
     },
 
