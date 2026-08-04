@@ -103,10 +103,10 @@
       blurb: "블랙과 라이트 그레이 두 컬러를 함께 구성한 2팩. 낱개로 사는 것보다 합리적입니다.",
     },
 
-    // 6) 웨스턴 벨트 (신규)
+    // 6) 웨이스트 웨스턴 벨트 (구 '웨스턴 벨트')
     {
       id: "western-belt", cat: "Accessories",
-      name: "웨스턴 벨트",
+      name: "웨이스트 웨스턴 벨트",
       subtitle: "Western Belt · Silver",
       price: 24900, badge: "New",
       buy: "https://m.smartstore.naver.com/athleticstore/products/13683518247",
@@ -117,7 +117,7 @@
       gallery: ["assets/belt-2.jpg", "assets/belt-3.jpg", "assets/belt-1.jpg"],
       swatches: [SW.black],
       detail: "generic",
-      spec: [["브랜드", "SIK"], ["제품명", "웨스턴 벨트"], ["컬러", "블랙 (실버 버클)"], ["소재", "인조가죽 · 메탈 버클"], ["사이즈", "총길이 105cm · 폭 2cm · 버클 4.5 x 3.5cm"], ["제조국", "중국"]],
+      spec: [["브랜드", "SIK"], ["제품명", "웨이스트 웨스턴 벨트"], ["컬러", "블랙 (실버 버클)"], ["소재", "인조가죽 · 메탈 버클"], ["사이즈", "총길이 105cm · 폭 2cm · 버클 4.5 x 3.5cm"], ["제조국", "중국"]],
       blurb: "실버 버클과 포인트 팁이 돋보이는 웨스턴 무드 벨트. 데님과 슬랙스 모두에 잘 어울립니다.",
     },
   ];
