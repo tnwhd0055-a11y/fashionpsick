@@ -160,7 +160,9 @@ function ProductInfoNotice({ product }) {
   const seller = B.company + (B.tel ? " " + B.tel : "");
 
   const rows = [
-    ["품명 및 모델명", product.name],
+    // 표시용 이름에는 "[8.12 예약배송]" 같은 말머리가 붙는다. 고시의 품명은 제품 그 자체를
+    // 가리켜야 하므로 spec 의 정식 제품명을 우선 쓰고, 없을 때만 표시명으로 떨어진다.
+    ["품명 및 모델명", pick("제품명", product.name)],
     ["소재 / 재질", pick("소재", "상세페이지 참조")],
     ["색상", pick("컬러", "상세페이지 참조")],
     ["치수", pick("사이즈", product.length || "상세페이지 참조")],

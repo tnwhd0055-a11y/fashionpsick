@@ -32,7 +32,9 @@
     // 2) 플라티즈마 블랙 비즈 목걸이 (구 'EP.2 블랙 펄 비즈 목걸이')
     {
       id: "blackpoint-necklace", cat: "Necklaces",
-      name: "플라티즈마 블랙 비즈 목걸이",
+      // 표시용 이름에만 예약배송 말머리를 붙인다. 상품정보제공고시의 '품명' 은
+      // spec 의 제품명(말머리 없는 정식명)을 쓴다 — 배송 일정은 품명이 아니다.
+      name: "[8.12 예약배송] 플라티즈마 블랙 비즈 목걸이",
       subtitle: "Platysma Black Beaded Necklace · Black",
       price: 19000, compareAt: 29900, badge: "New",
       buy: "https://m.smartstore.naver.com/athleticstore/products/13683518219",
