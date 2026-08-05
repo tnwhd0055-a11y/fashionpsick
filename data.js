@@ -36,7 +36,7 @@
       // spec 의 제품명(말머리 없는 정식명)을 쓴다 — 배송 일정은 품명이 아니다.
       name: "[8.12 예약배송] 플라티즈마 블랙 비즈 목걸이",
       subtitle: "Platysma Black Beaded Necklace · Black",
-      price: 19000, compareAt: 29900, badge: "New",
+      price: 19900, compareAt: 29900, badge: "New",
       buy: "https://m.smartstore.naver.com/athleticstore/products/13683518219",
       image: "assets/blackpoint-worn.jpg",
       frontImage: "assets/blackpoint-front.jpg",
