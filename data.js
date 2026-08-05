@@ -110,7 +110,7 @@
       id: "western-belt", cat: "Accessories",
       name: "웨이스트 웨스턴 벨트",
       subtitle: "Western Belt · Silver",
-      price: 24900, badge: "New",
+      price: 24900, compareAt: 34900, badge: "New",
       buy: "https://m.smartstore.naver.com/athleticstore/products/13683518247",
       // 대표컷은 belt-2(엇갈려 놓은 전체 컷). belt-1 은 버클 클로즈업이라
       // 3:4 타일에서 잘리면 뭔지 알아볼 수 없어서 뒤로 뺐다.
