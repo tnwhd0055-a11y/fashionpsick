@@ -38,37 +38,119 @@
 
 <!-- App shell -->
 <script type="text/babel">
-  function App() {
-    const [screen, setScreen] = React.useState("New");
-    const [productId, setProductId] = React.useState(null);
-    const [category, setCategory] = React.useState(null);
-    // 첫 진입 인트로 커튼. ?nointro=1 이면 건너뛴다 (스크린샷·디자인 확인용).
-    const [intro, setIntro] = React.useState(() => !/[?&]nointro=1/.test(window.location.search));
+  /* 화면 전환을 브라우저 히스토리에 남긴다.
+     예전엔 screen 을 useState 로만 들고 있어서 뒤로가기가 사이트를 떠났다.
+     (스마트스토어에 다녀온 뒤라면 문서가 새로 떠서 인트로 커튼까지 재생됐다.)
+     이제는 화면마다 엔트리를 하나씩 쌓고, 떠나기 직전 스크롤 위치를 그 엔트리에
+     새겨뒀다가 popstate 에서 되돌린다. 인트로는 탭 세션당 한 번만 뜬다. */
 
-    const go = (s) => { setScreen(s); window.scrollTo({ top: 0 }); };
+  const HOME_VIEW = { screen: "home", productId: null, category: null };
+  const INTRO_SEEN = "sik:intro-seen";
+
+  const readView = () => {
+    const s = window.history.state && window.history.state.sik;
+    return s ? { screen: s.screen, productId: s.productId, category: s.category } : null;
+  };
+  const entry = (v, scroll) => ({ sik: { screen: v.screen, productId: v.productId, category: v.category, scroll } });
+
+  function App() {
+    // 새로고침·복귀 시에도 보던 화면 그대로 (history.state 는 문서가 다시 떠도 남는다)
+    const [view, setView] = React.useState(() => readView() || HOME_VIEW);
+    // 첫 진입 인트로 커튼. ?nointro=1 이면 건너뛴다 (스크린샷·디자인 확인용).
+    const [intro, setIntro] = React.useState(() => {
+      if (/[?&]nointro=1/.test(window.location.search)) return false;
+      try { return !sessionStorage.getItem(INTRO_SEEN); } catch (e) { return true; }
+    });
+
+    // popstate 핸들러는 한 번만 등록하므로, 최신 화면은 ref 로 읽는다
+    const viewRef = React.useRef(view);
+    viewRef.current = view;
+
+    React.useEffect(() => {
+      // 브라우저 자동 복원은 SPA 렌더 타이밍과 어긋난다. 직접 복원한다.
+      if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+      // 첫 엔트리에도 도장을 찍어둔다 — 뒤로가기로 여기 돌아올 수 있어야 한다
+      if (!readView()) window.history.replaceState(entry(HOME_VIEW, 0), "");
+    }, []);
+
+    // 되돌릴 스크롤 위치. popstate 에서 바로 스크롤하면 안 된다 —
+    // 그 시점엔 React 가 아직 이전 화면(긴 제품 페이지)을 그리고 있어서
+    // 스크롤이 한 번에 성공해버리고, 곧이어 홈으로 리렌더되며 문서가 잠깐
+    // 짧아지는 사이에 위치가 날아간다. 화면이 갈린 뒤에 복원한다.
+    const pendingScroll = React.useRef(null);
+
+    React.useLayoutEffect(() => {
+      const y = pendingScroll.current;
+      if (y == null) return;
+      pendingScroll.current = null;
+
+      let frames = 0, held = 0, done = false;
+      const stop = () => {
+        done = true;
+        window.removeEventListener("wheel", stop);
+        window.removeEventListener("touchstart", stop);
+        window.removeEventListener("keydown", stop);
+      };
+      // 사용자가 먼저 스크롤하면 즉시 손을 뗀다
+      window.addEventListener("wheel", stop, { passive: true });
+      window.addEventListener("touchstart", stop, { passive: true });
+      window.addEventListener("keydown", stop);
+
+      const step = () => {
+        if (done) return;
+        if (Math.abs(window.scrollY - y) > 2) { window.scrollTo(0, y); held = 0; }
+        else held++;
+        // 이미지가 뜨면서 문서 높이가 계속 변한다. 한 번 맞았다고 끝내지 않고
+        // 몇 프레임 연속으로 유지되는지 확인한다.
+        if (held < 3 && frames++ < 40) requestAnimationFrame(step);
+        else stop();
+      };
+      step();
+
+      return stop;
+    }, [view]);
+
+    React.useEffect(() => {
+      const onPop = (e) => {
+        const s = e.state && e.state.sik;
+        pendingScroll.current = s ? (s.scroll || 0) : 0;
+        setView(s ? { screen: s.screen, productId: s.productId, category: s.category } : HOME_VIEW);
+        setIntro(false);          // 커튼이 떠 있는 채로 돌아오면 그 안에 갇힌다
+      };
+      window.addEventListener("popstate", onPop);
+      return () => window.removeEventListener("popstate", onPop);
+    }, []);
+
+    const go = (next) => {
+      window.history.replaceState(entry(viewRef.current, window.scrollY), "");  // 떠나는 자리 기억
+      window.history.pushState(entry(next, 0), "");
+      setView(next);
+      window.scrollTo(0, 0);
+    };
 
     const nav = (link) => {
-      if (link === "home" || link === "New") return go("home");
-      if (link === "About") return go("about");
+      if (link === "home" || link === "New") return go(HOME_VIEW);
+      if (link === "About") return go({ screen: "about", productId: null, category: null });
       // "All" 또는 카테고리(Tops/Necklaces/Accessories) → 컬렉션 필터
-      setCategory(link);
-      return go("collection");
+      return go({ screen: "collection", productId: null, category: link });
     };
-    const openProduct = (id) => { setProductId(id); go("product"); };
-
-    // map initial "New" → home
-    const current = screen === "New" ? "home" : screen;
+    const openProduct = (id) => go({ screen: "product", productId: id, category: viewRef.current.category });
 
     const page =
-      current === "collection" ? <window.CollectionPage nav={nav} openProduct={openProduct} category={category} /> :
-      current === "product"    ? <window.ProductPage nav={nav} openProduct={openProduct} productId={productId} /> :
-      current === "about"      ? <window.AboutPage nav={nav} /> :
-                                 <window.HomePage nav={nav} openProduct={openProduct} />;
+      view.screen === "collection" ? <window.CollectionPage nav={nav} openProduct={openProduct} category={view.category} /> :
+      view.screen === "product"    ? <window.ProductPage nav={nav} openProduct={openProduct} productId={view.productId} /> :
+      view.screen === "about"      ? <window.AboutPage nav={nav} /> :
+                                     <window.HomePage nav={nav} openProduct={openProduct} />;
+
+    const introDone = () => {
+      try { sessionStorage.setItem(INTRO_SEEN, "1"); } catch (e) {}
+      setIntro(false);
+    };
 
     return (
       <React.Fragment>
         {page}
-        {intro && <window.IntroCurtain onDone={() => setIntro(false)} />}
+        {intro && <window.IntroCurtain onDone={introDone} />}
       </React.Fragment>
     );
   }
