@@ -80,6 +80,7 @@ const SIK_UI_CSS = `
   .sk-burger{display:flex;justify-self:start;width:22px;gap:5px}
   .sk-head .sk-mark{justify-self:center;height:20px}
   .sk-nav{display:none}
+  .sk-ig-desk{display:none}
   .sk-foot-grid{grid-template-columns:1fr 1fr;gap:34px}
   .sk-foot-grid>:first-child{grid-column:1/-1}
   .sk-foot-end{flex-direction:column;gap:10px}
@@ -125,7 +126,10 @@ function SikHeader({ nav, active }) {
             <a key={l.key} href="#" data-active={l.key === active ? "1" : null} onClick={goto(l.key)}>{l.label}</a>
           ))}
         </nav>
-        <a className="sk-ig sk-ser sk-cap-track" href={IG} target="_blank" rel="noreferrer">INSTAGRAM</a>
+        <div style={{ justifySelf: "end", display: "flex", gap: 22, alignItems: "center" }}>
+          <a className="sk-ig sk-ser sk-cap-track sk-ig-desk" href={IG} target="_blank" rel="noreferrer">INSTAGRAM</a>
+          {window.CartLink && <window.CartLink nav={nav} />}
+        </div>
       </header>
 
       {open && (
@@ -137,6 +141,7 @@ function SikHeader({ nav, active }) {
           <ul className="sk-ser sk-cap-track">
             {links.map((l) => <li key={l.key}><a href="#" onClick={goto(l.key)}>{l.label}</a></li>)}
             <li><a href="#" onClick={goto("About")}>ABOUT</a></li>
+            {window.SIK_SHOP && window.SIK_SHOP.on && <li><a href="#" onClick={goto("lookup")}>주문 조회</a></li>}
           </ul>
         </div>
       )}
@@ -226,6 +231,7 @@ function SikFooter({ nav }) {
             <li><a href="#" onClick={goto("About")}>ABOUT</a></li>
             <li><a href={IG} target="_blank" rel="noreferrer">INSTAGRAM</a></li>
             <li><a href={window.SIK_SMARTSTORE} target="_blank" rel="noreferrer">NAVER STORE</a></li>
+            {window.SIK_SHOP && window.SIK_SHOP.on && <li><a href="#" onClick={goto("lookup")}>주문 조회</a></li>}
           </ul>
         </div>
       </div>

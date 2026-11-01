@@ -86,6 +86,10 @@ function ProductPage({ nav, openProduct, productId }) {
               </div>
             )}
 
+            {window.SIK_SHOP && window.SIK_SHOP.on ? (
+              <window.PdpBuy product={product} colorIndex={sw} nav={nav} />
+            ) : (
+            <React.Fragment>
             <div style={{ display: "flex", gap: "var(--space-sm)", marginTop: "var(--space-2xl)" }}>
               {/* 품절이면 구매 동선을 아예 막는다. 링크만 남겨두면
                   스마트스토어에서 결제가 되어 못 보내는 주문이 들어온다. */}
@@ -104,6 +108,8 @@ function ProductPage({ nav, openProduct, productId }) {
                 ? <React.Fragment>재입고되면 인스타그램 <a href={window.SIK_INSTAGRAM} target="_blank" rel="noreferrer">@fashionpsick</a> 으로 안내드립니다.</React.Fragment>
                 : "결제는 네이버페이 · 스마트스토어로 연결됩니다."}
             </div>
+            </React.Fragment>
+            )}
 
             {product.blurb && (
               <div style={{ marginTop: "var(--space-2xl)" }}>

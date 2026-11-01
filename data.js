@@ -56,6 +56,7 @@
       frontImage: "assets/mesh-front.jpg",
       gallery: ["assets/mesh-model.jpg", "assets/mesh-closeup.jpg", "assets/mesh-back.jpg", "assets/mesh-front.jpg"],
       swatches: [SW.ivory],
+      sizes: ["M", "L", "XL"],   // 자체 주문 사이즈 선택지 — supabase products.option 과 같은 값
       detail: "generic",
       // 사이즈: 중국 원표를 한 단계씩 내려 라벨링 (중국 L→M, XL→L, 2XL→XL).
       // 실측 숫자는 원표 그대로. 근거와 검수사항은 docs/사이즈표-델토이드-메쉬-반팔-셔츠.md
@@ -168,7 +169,8 @@
     mailOrderExempt: "간이과세자 (전자상거래법 시행령 제6조에 따른 신고 면제)",
     address: "(03625) 서울특별시 서대문구 세무서길 78, 302호",
     tel: "010-3084-8082",
-    host: "GitHub, Inc.",
+    // 테스트 주소(workers.dev)는 Cloudflare, 기존 주소(github.io)는 GitHub 이 호스팅한다
+    host: /github\.io$/.test(location.hostname) ? "GitHub, Inc." : "Cloudflare, Inc.",
   };
 
   window.SIK_TAGLINE = "fashion & fitness";

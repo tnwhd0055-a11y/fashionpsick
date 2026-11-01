@@ -27,6 +27,8 @@
 <!-- Design system bundle + shared data (plain scripts) -->
 <script src="_ds_bundle.js"></script>
 <script src="data.js"></script>
+<script src="shop-config.js"></script>
+<script src="shop.js"></script>
 
 <!-- Shared helpers + screens (babel, define window globals) -->
 <script type="text/babel" src="kit-shared.jsx"></script>
@@ -35,6 +37,7 @@
 <script type="text/babel" src="screen-product.jsx"></script>
 <script type="text/babel" src="screen-about.jsx"></script>
 <script type="text/babel" src="screen-intro.jsx"></script>
+<script type="text/babel" src="screen-shop.jsx"></script>
 
 <!-- App shell -->
 <script type="text/babel">
@@ -55,10 +58,12 @@
 
   function App() {
     // 새로고침·복귀 시에도 보던 화면 그대로 (history.state 는 문서가 다시 떠도 남는다)
-    const [view, setView] = React.useState(() => readView() || HOME_VIEW);
+    const ADMIN_VIEW = { screen: "admin", productId: null, category: null };
+    const wantsAdmin = window.location.hash === "#admin";
+    const [view, setView] = React.useState(() => (wantsAdmin ? ADMIN_VIEW : readView() || HOME_VIEW));
     // 첫 진입 인트로 커튼. ?nointro=1 이면 건너뛴다 (스크린샷·디자인 확인용).
     const [intro, setIntro] = React.useState(() => {
-      if (/[?&]nointro=1/.test(window.location.search)) return false;
+      if (/[?&]nointro=1/.test(window.location.search) || wantsAdmin) return false;
       try { return !sessionStorage.getItem(INTRO_SEEN); } catch (e) { return true; }
     });
 
@@ -70,7 +75,7 @@
       // 브라우저 자동 복원은 SPA 렌더 타이밍과 어긋난다. 직접 복원한다.
       if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
       // 첫 엔트리에도 도장을 찍어둔다 — 뒤로가기로 여기 돌아올 수 있어야 한다
-      if (!readView()) window.history.replaceState(entry(HOME_VIEW, 0), "");
+      if (!readView()) window.history.replaceState(entry(wantsAdmin ? ADMIN_VIEW : HOME_VIEW, 0), "");
     }, []);
 
     // 되돌릴 스크롤 위치. popstate 에서 바로 스크롤하면 안 된다 —
@@ -131,6 +136,8 @@
     const nav = (link) => {
       if (link === "home" || link === "New") return go(HOME_VIEW);
       if (link === "About") return go({ screen: "about", productId: null, category: null });
+      // 자체 주문 화면 (shop.js · screen-shop.jsx)
+      if (["cart", "checkout", "done", "lookup", "admin"].indexOf(link) >= 0) return go({ screen: link, productId: null, category: null });
       // "All" 또는 카테고리(Tops/Necklaces/Accessories) → 컬렉션 필터
       return go({ screen: "collection", productId: null, category: link });
     };
@@ -140,6 +147,11 @@
       view.screen === "collection" ? <window.CollectionPage nav={nav} openProduct={openProduct} category={view.category} /> :
       view.screen === "product"    ? <window.ProductPage nav={nav} openProduct={openProduct} productId={view.productId} /> :
       view.screen === "about"      ? <window.AboutPage nav={nav} /> :
+      view.screen === "cart"       ? <window.CartPage nav={nav} /> :
+      view.screen === "checkout"   ? <window.CheckoutPage nav={nav} /> :
+      view.screen === "done"       ? <window.DonePage nav={nav} /> :
+      view.screen === "lookup"     ? <window.LookupPage nav={nav} /> :
+      view.screen === "admin"      ? <window.AdminPage nav={nav} /> :
                                      <window.HomePage nav={nav} openProduct={openProduct} />;
 
     const introDone = () => {
