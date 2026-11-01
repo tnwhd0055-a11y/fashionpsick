@@ -135,6 +135,16 @@
       return () => window.removeEventListener("popstate", onPop);
     }, []);
 
+    // 같은 탭에서 주소 끝만 #privacy 등으로 바꿔도 그 화면으로 (문서가 다시 뜨지 않는 경우)
+    React.useEffect(() => {
+      const onHash = () => {
+        const sc = { "#admin": "admin", "#terms": "terms", "#privacy": "privacy", "#mypage": "mypage", "#lookup": "lookup" }[window.location.hash];
+        if (sc) { setIntro(false); go({ screen: sc, productId: null, category: null }); }
+      };
+      window.addEventListener("hashchange", onHash);
+      return () => window.removeEventListener("hashchange", onHash);
+    }, []);
+
     const go = (next) => {
       window.history.replaceState(entry(viewRef.current, window.scrollY), "");  // 떠나는 자리 기억
       window.history.pushState(entry(next, 0), "");
