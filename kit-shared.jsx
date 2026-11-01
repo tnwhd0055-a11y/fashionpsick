@@ -236,7 +236,11 @@ function SikFooter({ nav }) {
         </div>
       </div>
       <div className="sk-foot-end sk-hair-sm">
-        <span>© 2026 SIK</span>
+        <span>
+          © 2026 SIK
+          <a href="#" onClick={goto("terms")} style={{ color: "inherit", marginLeft: 16 }}>이용약관</a>
+          <a href="#" onClick={goto("privacy")} style={{ color: "var(--ink)", fontWeight: 700, marginLeft: 12 }}>개인정보처리방침</a>
+        </span>
         <span>FITNESS AND FASHION</span>
       </div>
     </footer>

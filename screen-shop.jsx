@@ -463,7 +463,7 @@ function CheckoutPage({ nav }) {
           )}
           <label className="sh-check">
             <input type="checkbox" checked={agree.order} onChange={(e) => setAgree({ ...agree, order: e.target.checked })} />
-            <span>[필수] 주문 상품과 결제 금액을 확인했으며, 구매에 동의합니다.</span>
+            <span>[필수] 주문 상품과 결제 금액을 확인했으며, <a href="#" onClick={(e) => { e.preventDefault(); window.open(location.pathname + "#terms", "_blank"); }}>이용약관</a>에 동의합니다.</span>
           </label>
           <button type="submit" className="sh-btn sh-full" style={{ marginTop: 16, height: 58, fontSize: 17 }} disabled={busy}>
             {busy ? (pay === "bank" ? "주문 접수 중…" : "결제 진행 중…") : `${S.won(total)} ${pay === "bank" ? "주문하기" : "결제하기"}`}

@@ -38,6 +38,7 @@
 <script type="text/babel" src="screen-about.jsx"></script>
 <script type="text/babel" src="screen-intro.jsx"></script>
 <script type="text/babel" src="screen-shop.jsx"></script>
+<script type="text/babel" src="screen-legal.jsx"></script>
 
 <!-- App shell -->
 <script type="text/babel">
@@ -58,8 +59,10 @@
 
   function App() {
     // 새로고침·복귀 시에도 보던 화면 그대로 (history.state 는 문서가 다시 떠도 남는다)
-    const ADMIN_VIEW = { screen: "admin", productId: null, category: null };
-    const wantsAdmin = window.location.hash === "#admin";
+    // 주소 끝 #admin · #terms · #privacy 로 그 화면을 바로 연다 (인트로 없이)
+    const hashScreen = { "#admin": "admin", "#terms": "terms", "#privacy": "privacy" }[window.location.hash];
+    const ADMIN_VIEW = { screen: hashScreen || "admin", productId: null, category: null };
+    const wantsAdmin = !!hashScreen;
     // 휴대폰 결제를 마치고 결제사 페이지에서 돌아오면 ?pay=return — 완료 화면이 결제를 확인한다
     const payReturn = /[?&]pay=return/.test(window.location.search);
     const DONE_VIEW = { screen: "done", productId: null, category: null };
@@ -140,7 +143,7 @@
       if (link === "home" || link === "New") return go(HOME_VIEW);
       if (link === "About") return go({ screen: "about", productId: null, category: null });
       // 자체 주문 화면 (shop.js · screen-shop.jsx)
-      if (["cart", "checkout", "done", "lookup", "admin"].indexOf(link) >= 0) return go({ screen: link, productId: null, category: null });
+      if (["cart", "checkout", "done", "lookup", "admin", "privacy", "terms"].indexOf(link) >= 0) return go({ screen: link, productId: null, category: null });
       // "All" 또는 카테고리(Tops/Necklaces/Accessories) → 컬렉션 필터
       return go({ screen: "collection", productId: null, category: link });
     };
@@ -155,6 +158,8 @@
       view.screen === "done"       ? <window.DonePage nav={nav} /> :
       view.screen === "lookup"     ? <window.LookupPage nav={nav} /> :
       view.screen === "admin"      ? <window.AdminPage nav={nav} /> :
+      view.screen === "privacy"    ? <window.PrivacyPage nav={nav} /> :
+      view.screen === "terms"      ? <window.TermsPage nav={nav} /> :
                                      <window.HomePage nav={nav} openProduct={openProduct} />;
 
     const introDone = () => {
