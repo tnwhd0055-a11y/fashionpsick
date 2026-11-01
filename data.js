@@ -22,7 +22,7 @@
       price: 19900, compareAt: 29900, badge: "Signature",
       buy: "https://m.smartstore.naver.com/athleticstore/products/13635362111",
       image: "assets/necklace-model.jpg",
-      frontImage: "assets/necklace-1.png",
+      frontImage: "assets/necklace-front-sq.jpg",   // 마우스 올렸을 때 사진 — 정사각형 (necklace-1.png 은 가로로 길어서 타일에서 작게 보였다)
       gallery: ["assets/necklace-model.jpg", "assets/necklace-1.png", "assets/necklace-2.png", "assets/necklace-3.png"],
       swatches: [SW.blackbrown], length: "42 cm + 5 cm",
       detail: "stone",
