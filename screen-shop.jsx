@@ -350,12 +350,17 @@ function CheckoutPage({ nav }) {
     if (!agree.privacy || !agree.order) { setErr("필수 동의 항목에 체크해 주세요."); return; }
     if (!f.zipcode) { setErr("주소 검색으로 배송지를 입력해 주세요."); return; }
     setBusy(true); setErr("");
-    S.createOrder(items, { ...f, depositor: f.depositor || f.name, privacy_agreed: true }, pay)
+    const buyer = { ...f, depositor: f.depositor || f.name, privacy_agreed: true };
+    S.createOrder(items, buyer, pay)
+      .then((o) => (pay === "bank" ? o : S.pay(o, items, buyer, pay)))   // 간편결제·카드는 결제창까지 끝나야 완료
       .then(() => {
         if (fromCart) S.saveCart([]);   // 바로구매였으면 장바구니는 그대로 둔다
         nav("done");
       })
-      .catch((e2) => { setErr(S.errorText(e2)); setBusy(false); window.scrollTo(0, 0); });
+      .catch((e2) => {
+        setErr(e2.payCancelled ? "결제가 완료되지 않았습니다. 다시 시도해 주세요." : /^SIK:/.test(e2.message) ? S.errorText(e2) : e2.message || S.errorText(e2));
+        setBusy(false); window.scrollTo(0, 0);
+      });
   };
 
   if (!items.length) {
@@ -461,7 +466,7 @@ function CheckoutPage({ nav }) {
             <span>[필수] 주문 상품과 결제 금액을 확인했으며, 구매에 동의합니다.</span>
           </label>
           <button type="submit" className="sh-btn sh-full" style={{ marginTop: 16, height: 58, fontSize: 17 }} disabled={busy}>
-            {busy ? "주문 접수 중…" : `${S.won(total)} 주문하기`}
+            {busy ? (pay === "bank" ? "주문 접수 중…" : "결제 진행 중…") : `${S.won(total)} ${pay === "bank" ? "주문하기" : "결제하기"}`}
           </button>
         </section>
       </form>
@@ -479,7 +484,20 @@ function copyText(t, done) {
 function DonePage({ nav }) {
   const S = window.SIK_SHOP;
   const { SikHeader, SikFooter } = window;
-  const o = S.lastOrder();
+  const [o, setO] = React.useState(() => S.lastOrder());
+  // 휴대폰 결제: 결제사 페이지에서 ?pay=return&paymentId=… 로 돌아온다
+  const back = React.useMemo(() => { const q = new URLSearchParams(location.search); return q.get("pay") === "return" ? q : null; }, []);
+  const [checking, setChecking] = React.useState(!!back);
+  const [payErr, setPayErr] = React.useState("");
+  React.useEffect(() => {
+    if (!back) return;
+    const id = back.get("paymentId");
+    history.replaceState(history.state, "", location.pathname);   // 새로고침해도 다시 확인하지 않게 주소 정리
+    S.finishPayment(id)
+      .then((x) => { setO(x || S.lastOrder()); S.saveCart([]); })
+      .catch((e) => setPayErr(back.get("code") ? (back.get("message") || "결제가 완료되지 않았습니다.") : e.message))
+      .then(() => setChecking(false));
+  }, []);
   const [copied, setCopied] = React.useState("");
   const cp = (t, k) => copyText(t, () => { setCopied(k); setTimeout(() => setCopied(""), 1600); });
   const due = o && o.deposit_deadline ? new Date(o.deposit_deadline) : null;
@@ -491,11 +509,18 @@ function DonePage({ nav }) {
       <SikHeader nav={nav} active={null} />
       <TestBanner />
       <div className="sh-wrap">
-        {!o ? (
+        {checking ? (
+          <div className="sh-empty">결제를 확인하고 있습니다…</div>
+        ) : payErr ? (
+          <div className="sh-empty">
+            <div className="sh-err" role="alert" style={{ textAlign: "left" }}>{payErr}</div>
+            <button className="sh-btn line sm" onClick={() => nav("cart")}>장바구니로</button>
+          </div>
+        ) : !o ? (
           <div className="sh-empty">최근 주문 정보가 없습니다.<div style={{ marginTop: 20 }}><button className="sh-btn line sm" onClick={() => nav("lookup")}>주문 조회</button></div></div>
         ) : (
           <React.Fragment>
-            <h1 className="sh-title">{o.pay_method === "bank" ? "주문이 접수되었습니다" : "주문이 완료되었습니다"}</h1>
+            <h1 className="sh-title">{o.pay_method === "bank" ? "주문이 접수되었습니다" : "결제가 완료되었습니다"}</h1>
             <p className="sh-sub">주문번호와 휴대폰 번호로 언제든 배송 상황을 확인할 수 있습니다.</p>
 
             <div className="sh-box">
@@ -754,6 +779,14 @@ function AdminPage({ nav }) {
                   </React.Fragment>
                 )}
                 {o.status === "shipped" && <button className="sh-btn line xs" disabled={busy === o.order_no} onClick={() => act(o, "deliver")}>배송 완료</button>}
+                {o.status === "paid" && o.pay_method !== "bank" && (
+                  <button className="sh-btn line xs" disabled={busy === o.order_no}
+                    onClick={() => {
+                      if (!window.confirm(`${o.order_no} 결제 ${S.won(o.amount)}을 환불(결제 취소)할까요? 손님 카드·간편결제로 바로 돌아갑니다.`)) return;
+                      setBusy(o.order_no); setErr("");
+                      S.adminRefund(o.order_no).then(load).catch((e) => setErr("환불하지 못했습니다. " + e.message)).then(() => setBusy(""));
+                    }}>결제 취소·환불</button>
+                )}
                 {["pending", "awaiting_deposit", "paid"].includes(o.status) && (o.status !== "paid" || o.pay_method === "bank") && (
                   <button className="sh-btn line xs" disabled={busy === o.order_no}
                     onClick={() => act(o, "cancel", { note: "[관리자 취소]" }, `${o.order_no} 주문을 취소할까요? 재고가 되돌아갑니다.${o.status === "paid" ? "\n입금된 금액은 직접 환불해 주셔야 합니다." : ""}`)}>주문 취소</button>

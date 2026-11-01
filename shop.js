@@ -141,6 +141,62 @@
     { key: "card", label: "신용·체크카드", ready: !!(C.portoneStoreId && C.portoneChannels && C.portoneChannels.card) },
   ];
 
+  // ── 간편결제·카드 (포트원 V2) ──
+  // 결제 id 는 주문번호 그대로 쓴다. 결제가 끝나면 서버 함수(supabase/functions/portone)가 포트원에 금액을 다시 물어 확정한다.
+  function loadPortOne() {
+    if (window.PortOne) return Promise.resolve(window.PortOne);
+    return new Promise(function (ok, fail) {
+      var s = document.createElement("script");
+      s.src = "https://cdn.portone.io/v2/browser-sdk.js";
+      s.onload = function () { ok(window.PortOne); };
+      s.onerror = function () { fail(new Error("결제 모듈을 불러오지 못했습니다.")); };
+      document.head.appendChild(s);
+    });
+  }
+  function confirmPayment(paymentId, abort) {
+    return call("/functions/v1/portone", { method: "POST", headers: headers(), body: JSON.stringify({ paymentId: paymentId, abort: !!abort }) });
+  }
+  // 결제창을 띄운다. 휴대폰은 결제사 페이지로 넘어갔다가 ?pay=return 으로 돌아온다 (index.html 이 받아서 완료 화면으로)
+  function pay(order, items, buyer, method) {
+    var first = line(items[0]);
+    var orderName = first.name + (items.length > 1 ? " 외 " + (items.length - 1) + "건" : "");
+    var req = {
+      storeId: C.portoneStoreId,
+      channelKey: method === "kakaopay" ? C.portoneChannels.kakaopay : method === "naverpay" ? C.portoneChannels.naverpay : C.portoneChannels.card,
+      paymentId: order.order_no,
+      orderName: orderName,
+      totalAmount: order.amount,
+      currency: "CURRENCY_KRW",
+      payMethod: method === "card" ? "CARD" : "EASY_PAY",
+      customer: { fullName: buyer.name, phoneNumber: buyer.phone.replace(/\D/g, "") },
+      redirectUrl: location.origin + location.pathname + "?pay=return",
+    };
+    return loadPortOne()
+      .then(function (P) { return P.requestPayment(req); })
+      .then(function (res) {
+        if (res && res.code !== undefined) {
+          // 손님이 창을 닫았거나 실패 — 주문을 바로 취소해서 재고를 돌려놓는다
+          return confirmPayment(order.order_no, true).catch(function () {}).then(function () {
+            var e = new Error(res.message || "결제가 취소되었습니다."); e.payCancelled = true; throw e;
+          });
+        }
+        return finishPayment(order.order_no);
+      });
+  }
+  function finishPayment(paymentId) {
+    return confirmPayment(paymentId, false).then(function (r) {
+      if (!r || !r.ok) throw new Error(r && r.code === "MISMATCH" ? "결제 금액이 주문과 달라 자동 취소했습니다." : "결제를 확인하지 못했습니다. (" + (r && r.code) + ")");
+      var o = lastOrder();
+      if (o && o.order_no === paymentId) { o.status = "paid"; write(LAST, o, sessionStorage); }
+      return o;
+    });
+  }
+  function adminRefund(orderNo) {
+    return adminToken().then(function (t) {
+      return call("/functions/v1/portone", { method: "POST", headers: headers(t), body: JSON.stringify({ action: "refund", order_no: orderNo }) });
+    });
+  }
+
   var STATUS = {
     pending: "결제 대기", awaiting_deposit: "입금 대기", paid: "결제 완료", shipped: "배송중",
     delivered: "배송 완료", cancelled: "주문 취소", refunded: "환불 완료",
@@ -158,6 +214,7 @@
     startCheckout: startCheckout, checkoutItems: checkoutItems, shippingFee: shippingFee,
     stock: stock, createOrder: createOrder, lastOrder: lastOrder, lookup: lookup, errorText: errorText,
     adminSession: adminSession, adminLogin: adminLogin, adminLogout: adminLogout, adminOrders: adminOrders, adminUpdate: adminUpdate,
+    pay: pay, finishPayment: finishPayment, adminRefund: adminRefund,
     trackUrl: trackUrl, won: won,
   };
 })();
