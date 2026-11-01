@@ -65,11 +65,14 @@
     const wantsAdmin = !!hashScreen;
     // 휴대폰 결제를 마치고 결제사 페이지에서 돌아오면 ?pay=return — 완료 화면이 결제를 확인한다
     const payReturn = /[?&]pay=return/.test(window.location.search);
+    // 카카오 로그인에서 돌아오면 주소 #access_token=… — 세션을 저장하고 로그인 전에 보던 화면으로
+    const [loginBack] = React.useState(() => (window.SIK_SHOP && window.SIK_SHOP.takeLoginReturn ? window.SIK_SHOP.takeLoginReturn() : null));
     const DONE_VIEW = { screen: "done", productId: null, category: null };
-    const [view, setView] = React.useState(() => (wantsAdmin ? ADMIN_VIEW : payReturn ? DONE_VIEW : readView() || HOME_VIEW));
+    const [view, setView] = React.useState(() => (wantsAdmin ? ADMIN_VIEW : payReturn ? DONE_VIEW
+      : loginBack && loginBack !== "home" ? { screen: loginBack, productId: null, category: null } : readView() || HOME_VIEW));
     // 첫 진입 인트로 커튼. ?nointro=1 이면 건너뛴다 (스크린샷·디자인 확인용).
     const [intro, setIntro] = React.useState(() => {
-      if (/[?&]nointro=1/.test(window.location.search) || wantsAdmin || payReturn) return false;
+      if (/[?&]nointro=1/.test(window.location.search) || wantsAdmin || payReturn || loginBack) return false;
       try { return !sessionStorage.getItem(INTRO_SEEN); } catch (e) { return true; }
     });
 
@@ -143,7 +146,7 @@
       if (link === "home" || link === "New") return go(HOME_VIEW);
       if (link === "About") return go({ screen: "about", productId: null, category: null });
       // 자체 주문 화면 (shop.js · screen-shop.jsx)
-      if (["cart", "checkout", "done", "lookup", "admin", "privacy", "terms"].indexOf(link) >= 0) return go({ screen: link, productId: null, category: null });
+      if (["cart", "checkout", "done", "lookup", "admin", "privacy", "terms", "mypage"].indexOf(link) >= 0) return go({ screen: link, productId: null, category: null });
       // "All" 또는 카테고리(Tops/Necklaces/Accessories) → 컬렉션 필터
       return go({ screen: "collection", productId: null, category: link });
     };
@@ -159,6 +162,7 @@
       view.screen === "lookup"     ? <window.LookupPage nav={nav} /> :
       view.screen === "admin"      ? <window.AdminPage nav={nav} /> :
       view.screen === "privacy"    ? <window.PrivacyPage nav={nav} /> :
+      view.screen === "mypage"     ? <window.MyPage nav={nav} /> :
       view.screen === "terms"      ? <window.TermsPage nav={nav} /> :
                                      <window.HomePage nav={nav} openProduct={openProduct} />;
 

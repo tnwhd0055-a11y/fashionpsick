@@ -3,7 +3,7 @@
    가격·배송비·재고는 서버가 최종 결정한다. 여기 계산은 화면 표시용일 뿐이다. */
 (function () {
   var C = window.SIK_SHOP_CONFIG || {};
-  var CART = "sik:cart", CHECKOUT = "sik:checkout", LAST = "sik:last-order", ADMIN = "sik:admin-session";
+  var CART = "sik:cart", CHECKOUT = "sik:checkout", LAST = "sik:last-order", ADMIN = "sik:admin-session", MEMBER = "sik:member";
 
   // 테스트 기간에는 정식 주소(sikseoul.com)·Cloudflare 테스트 주소·로컬에서만 자체 주문을 켠다.
   // sikseoul.com 은 PG 심사(2026-11) 때문에 켰다 — 심사자가 장바구니·결제 화면을 확인해야 한다.
@@ -77,11 +77,53 @@
     });
   }
 
+  // ── 카카오 로그인 회원 (Supabase Auth) ──
+  // 로그인 버튼 → 카카오 → Supabase → 이 사이트로 돌아오며 주소 #access_token=… 에 세션이 실려 온다.
+  // 세션은 이 브라우저에만 저장한다 (localStorage). 비밀번호는 우리가 다루지 않는다.
+  function member() { return read(MEMBER); }
+  function saveMember(m) { write(MEMBER, m); window.dispatchEvent(new Event("sik-member")); }
+  function kakaoLogin(backTo) {
+    try { sessionStorage.setItem("sik:login-back", backTo || "home"); } catch (e) {}
+    location.href = C.supabaseUrl + "/auth/v1/authorize?provider=kakao&redirect_to=" + encodeURIComponent(location.origin + location.pathname);
+  }
+  function logout() { try { localStorage.removeItem(MEMBER); } catch (e) {} window.dispatchEvent(new Event("sik-member")); }
+  // 카카오에서 돌아왔으면 세션을 꺼내 저장하고, 로그인 전에 보던 화면 이름을 돌려준다
+  function takeLoginReturn() {
+    if (!/access_token=/.test(location.hash)) return null;
+    var q = new URLSearchParams(location.hash.slice(1));
+    history.replaceState(history.state, "", location.pathname + location.search);
+    var m = { token: q.get("access_token"), refresh: q.get("refresh_token"), kakaoToken: q.get("provider_token"),
+              until: Date.now() + (Number(q.get("expires_in") || 3600) - 60) * 1000 };
+    saveMember(m);
+    call("/auth/v1/user", { headers: headers(m.token) }).then(function (u) {
+      var md = (u && u.user_metadata) || {};
+      saveMember(Object.assign({}, member(), { id: u.id, nickname: md.name || md.full_name || md.nickname || "", email: u.email || "" }));
+    }).catch(function () {});
+    var back = "home"; try { back = sessionStorage.getItem("sik:login-back") || "home"; } catch (e) {}
+    return back;
+  }
+  function memberToken() {
+    var m = member();
+    if (!m) return Promise.resolve(null);
+    if (Date.now() < m.until) return Promise.resolve(m.token);
+    return call("/auth/v1/token?grant_type=refresh_token", { method: "POST", headers: headers(), body: JSON.stringify({ refresh_token: m.refresh }) })
+      .then(function (n) { saveMember(Object.assign({}, m, { token: n.access_token, refresh: n.refresh_token, until: Date.now() + (n.expires_in - 60) * 1000 })); return n.access_token; })
+      .catch(function () { logout(); return null; });
+  }
+  // 카카오에 등록된 이름·전화번호·기본 배송지 (손님이 동의한 것만 온다)
+  function kakaoProfile() {
+    var m = member();
+    if (!m || !m.kakaoToken) return Promise.resolve(null);
+    return call("/functions/v1/portone", { method: "POST", headers: headers(), body: JSON.stringify({ action: "kakao-profile", provider_token: m.kakaoToken }) })
+      .then(function (r) { return r && r.ok ? r : null; }).catch(function () { return null; });
+  }
+  function myOrders() { return memberToken().then(function (t) { return t ? rpc("my_orders", {}, t) : []; }); }
+
   function createOrder(items, buyer, payMethod) {
-    return rpc("create_order", {
+    return memberToken().then(function (t) { return rpc("create_order", {
       p_items: items.map(function (it) { return { id: it.id, option: it.option || "", qty: it.qty }; }),
       p_buyer: buyer, p_pay_method: payMethod,
-    }).then(function (o) { write(LAST, o, sessionStorage); return o; });
+    }, t); }).then(function (o) { write(LAST, o, sessionStorage); return o; });   // 로그인했으면 주문이 계정에 붙는다
   }
   function lastOrder() { return read(LAST, sessionStorage); }
   function lookup(orderNo, phone) { return rpc("lookup_order", { p_order_no: orderNo, p_phone: phone }); }
@@ -216,6 +258,7 @@
     stock: stock, createOrder: createOrder, lastOrder: lastOrder, lookup: lookup, errorText: errorText,
     adminSession: adminSession, adminLogin: adminLogin, adminLogout: adminLogout, adminOrders: adminOrders, adminUpdate: adminUpdate,
     pay: pay, finishPayment: finishPayment, adminRefund: adminRefund,
+    member: member, kakaoLogin: kakaoLogin, logout: logout, takeLoginReturn: takeLoginReturn, kakaoProfile: kakaoProfile, myOrders: myOrders,
     trackUrl: trackUrl, won: won,
   };
 })();

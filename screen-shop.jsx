@@ -84,6 +84,11 @@ const SHOP_CSS = `
 .sh-post-top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--warm-line);font-family:var(--font-sans);font-size:15px}
 .sh-post-top button{border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:var(--ink)}
 .sh-post-body{flex:1;min-height:0}
+.sh-kakao{height:52px;width:100%;border:0;border-radius:6px;background:#FEE500;color:rgba(0,0,0,.85);font-family:var(--font-sans);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.sh-kakao:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.sh-member{border:1px solid var(--warm-line);padding:16px;margin:0 0 8px;display:flex;flex-direction:column;gap:10px}
+.sh-member p{margin:0;font-size:13px;color:var(--mute);line-height:1.6}
+.sh-member .who{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;color:var(--ink)}
 .sh-test{background:#fff4d6;color:#7a5200;font-family:var(--font-sans);font-size:12px;text-align:center;padding:8px var(--sk-pad);line-height:1.5}
 @media (max-width:620px){
   .sh-pay{grid-template-columns:1fr 1fr}
@@ -108,6 +113,27 @@ function useCart() {
   return items;
 }
 
+function useMember() {
+  const S = window.SIK_SHOP;
+  const [m, setM] = React.useState(() => S.member());
+  React.useEffect(() => {
+    const on = () => setM(S.member());
+    window.addEventListener("sik-member", on);
+    return () => window.removeEventListener("sik-member", on);
+  }, []);
+  return m;
+}
+
+// 카카오 로그인 버튼 — 카카오 디자인 가이드의 노란 버튼
+function KakaoButton({ onClick, label = "카카오로 로그인", style }) {
+  return (
+    <button type="button" onClick={onClick} className="sh-kakao" style={style}>
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.32 4.66 6.74l-.95 3.48c-.08.3.26.54.52.37l4.15-2.75c.53.06 1.07.1 1.62.1 5.52 0 10-3.58 10-8S17.52 3 12 3z" /></svg>
+      {label}
+    </button>
+  );
+}
+
 // 헤더 오른쪽 장바구니 링크
 function CartLink({ nav }) {
   const S = window.SIK_SHOP;
@@ -118,6 +144,9 @@ function CartLink({ nav }) {
   return (
     <React.Fragment>
     <ShopStyle />
+    <a className="sh-cart sk-ser sk-cap-track" href="#" onClick={(e) => { e.preventDefault(); nav("mypage"); }} aria-label="내 주문">
+      MY
+    </a>
     <a className="sh-cart sk-ser sk-cap-track" href="#" onClick={(e) => { e.preventDefault(); nav("cart"); }} aria-label={`장바구니 ${n}개`}>
       CART{n > 0 && <b>{n}</b>}
     </a>
@@ -339,6 +368,24 @@ function CheckoutPage({ nav }) {
   const [busy, setBusy] = React.useState(false);
   const [err, setErr] = React.useState("");
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const member = useMember();
+  const [filled, setFilled] = React.useState("");
+  // 카카오 로그인 손님: 카카오에 등록된 이름·전화번호·기본 배송지로 빈칸을 채운다 (이미 쓴 칸은 건드리지 않음)
+  React.useEffect(() => {
+    if (!member) return;
+    S.kakaoProfile().then((p) => {
+      if (!p) return;
+      const a = p.address || {};
+      const ph = (a.phone || p.phone || "").replace(/^(\d{3})(\d{3,4})(\d{4})$/, "$1-$2-$3");
+      setF((cur) => ({
+        ...cur,
+        name: cur.name || a.name || p.name || "",
+        phone: cur.phone || ph,
+        zipcode: cur.zipcode || a.zipcode || "", address1: cur.address1 || a.address1 || "", address2: cur.address2 || a.address2 || "",
+      }));
+      setFilled(a.zipcode ? "카카오 배송지로 자동 입력했습니다. 다르면 고쳐 주세요." : (p.name || p.phone) ? "카카오 정보로 자동 입력했습니다." : "");
+    });
+  }, [member && member.token]);
 
   const phoneFmt = (v) => {
     const d = v.replace(/\D/g, "").slice(0, 11);
@@ -393,6 +440,20 @@ function CheckoutPage({ nav }) {
 
         <section className="sh-sec">
           <h2>배송 정보</h2>
+          <div className="sh-member">
+            {member ? (
+              <React.Fragment>
+                <div className="who"><span><b>{member.nickname || "카카오 회원"}</b> 님으로 로그인됨</span>
+                  <button type="button" className="sh-x" style={{ margin: 0 }} onClick={() => S.logout()}>로그아웃</button></div>
+                <p>{filled || "이 주문은 내 주문 내역에 저장됩니다."}</p>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <KakaoButton label="카카오로 로그인하고 주소 자동 입력" onClick={() => S.kakaoLogin("checkout")} />
+                <p>로그인하면 카카오에 등록된 이름·연락처·배송지가 자동으로 입력되고, 주문 내역을 언제든 볼 수 있습니다. 로그인하지 않아도 주문할 수 있습니다.</p>
+              </React.Fragment>
+            )}
+          </div>
           <div className="sh-field">
             <label htmlFor="ck-name">받는 분</label>
             <input id="ck-name" className="sh-in" autoComplete="name" value={f.name} onChange={set("name")} maxLength={30} required />
@@ -800,4 +861,52 @@ function AdminPage({ nav }) {
   );
 }
 
-Object.assign(window, { PdpBuy, CartLink, CartPage, CheckoutPage, DonePage, LookupPage, AdminPage });
+/* ── 내 주문 (카카오 로그인 회원) ─────────────────────────── */
+function MyPage({ nav }) {
+  const S = window.SIK_SHOP;
+  const { SikHeader, SikFooter } = window;
+  const member = useMember();
+  const [list, setList] = React.useState(null);
+  React.useEffect(() => { if (member) S.myOrders().then(setList).catch(() => setList([])); }, [member && member.token]);
+  const fmt = (t) => { const d = new Date(t); return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`; };
+  return (
+    <div style={{ background: "var(--paper)" }}>
+      <ShopStyle />
+      <SikHeader nav={nav} active={null} />
+      <div className="sh-wrap">
+        <h1 className="sh-title">내 주문</h1>
+        {!member ? (
+          <React.Fragment>
+            <p className="sh-sub">카카오로 로그인하면 주문 내역을 볼 수 있습니다. 비회원으로 주문했다면 주문 조회를 이용하세요.</p>
+            <KakaoButton onClick={() => S.kakaoLogin("mypage")} />
+            <button className="sh-btn line sh-full" style={{ marginTop: 8 }} onClick={() => nav("lookup")}>비회원 주문 조회</button>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <p className="sh-sub"><b style={{ color: "var(--ink)" }}>{member.nickname || "카카오 회원"}</b> 님 · <button className="sh-x" style={{ margin: 0 }} onClick={() => S.logout()}>로그아웃</button></p>
+            {list === null && <div className="sh-empty">불러오는 중…</div>}
+            {list && list.length === 0 && <div className="sh-empty">아직 주문이 없습니다.<div style={{ marginTop: 20 }}><button className="sh-btn line sm" onClick={() => nav("All")}>쇼핑하러 가기</button></div></div>}
+            {(list || []).map((o) => (
+              <article key={o.order_no} className="sh-order">
+                <header>
+                  <div><span className="no">{o.order_no}</span> <span className="when">{fmt(o.created_at)}</span></div>
+                  <span className="sh-pill" data-s={o.status}>{S.STATUS[o.status]}</span>
+                </header>
+                <div className="items" style={{ borderTop: 0 }}>
+                  {(o.items || []).map((it, i) => <div key={i}>{it.name}{it.option && ` · ${it.option}`} × {it.qty}</div>)}
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
+                  <b>{S.won(o.amount)}</b>
+                  {o.tracking_no && <a className="sh-copy" href={S.trackUrl(o.courier, o.tracking_no)} target="_blank" rel="noreferrer">{o.courier} 배송 추적</a>}
+                </div>
+              </article>
+            ))}
+          </React.Fragment>
+        )}
+      </div>
+      <SikFooter nav={nav} />
+    </div>
+  );
+}
+
+Object.assign(window, { MyPage, PdpBuy, CartLink, CartPage, CheckoutPage, DonePage, LookupPage, AdminPage });

@@ -83,12 +83,31 @@ async function refund(req: Request, orderNo: string) {
   return json({ ok: true, status: "refunded" });
 }
 
+// 카카오 로그인 손님의 이름·전화번호·기본 배송지 — 주문서 자동 입력용.
+// 브라우저가 카카오 API 를 직접 부르면 막혀서(CORS) 여기서 대신 묻는다. 받은 값은 저장하지 않고 그대로 돌려준다.
+async function kakaoProfile(token: string) {
+  if (!token) return json({ ok: false, code: "NO_TOKEN" }, 400);
+  const H = { Authorization: `Bearer ${token}` };
+  const me = await fetch("https://kapi.kakao.com/v2/user/me", { headers: H }).then((r) => (r.ok ? r.json() : null));
+  if (!me) return json({ ok: false, code: "KAKAO_TOKEN" }, 401);
+  const acc = me.kakao_account || {};
+  // 카카오 전화번호는 "+82 10-1234-5678" 형식
+  const phone = String(acc.phone_number || "").replace(/^\+82\s?/, "0").replace(/[^0-9]/g, "");
+  let addr = null;
+  const sa = await fetch("https://kapi.kakao.com/v1/user/shipping_address", { headers: H }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  const list = (sa && sa.shipping_addresses) || [];
+  const a = list.find((x: any) => x.is_default) || list[0];
+  if (a) addr = { zipcode: a.zone_number || "", address1: a.base_address || "", address2: a.detail_address || "", name: a.receiver_name || "", phone: String(a.receiver_phone_number1 || "").replace(/[^0-9]/g, "") };
+  return json({ ok: true, name: acc.name || "", phone, nickname: (acc.profile && acc.profile.nickname) || "", address: addr });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ ok: false }, 405);
   try {
     const body = await req.json().catch(() => ({}));
     if (body.action === "refund") return await refund(req, String(body.order_no || ""));
+    if (body.action === "kakao-profile") return await kakaoProfile(String(body.provider_token || ""));
     // 사이트: { paymentId, abort? } / 포트원 웹훅: { type, data: { paymentId } }
     const paymentId = String(body.paymentId || body.data?.paymentId || "");
     if (!/^SIK-\d{6}-\d{4,}$/.test(paymentId)) return json({ ok: true, skipped: true });   // 웹훅 테스트 등은 무시
