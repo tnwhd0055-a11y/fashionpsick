@@ -5,9 +5,10 @@
   var C = window.SIK_SHOP_CONFIG || {};
   var CART = "sik:cart", CHECKOUT = "sik:checkout", LAST = "sik:last-order", ADMIN = "sik:admin-session";
 
-  // 테스트 기간에는 Cloudflare 주소(·로컬)에서만 자체 주문을 켠다. GitHub Pages 손님은 네이버 구매만 본다.
-  // 실결제 오픈 때 이 줄을 true 로 바꾼다.
-  var ON = /\.workers\.dev$|^localhost$|^127\.0\.0\.1$/.test(location.hostname) && !!C.supabaseKey;
+  // 테스트 기간에는 정식 주소(sikseoul.com)·Cloudflare 테스트 주소·로컬에서만 자체 주문을 켠다.
+  // sikseoul.com 은 PG 심사(2026-11) 때문에 켰다 — 심사자가 장바구니·결제 화면을 확인해야 한다.
+  // 예전 GitHub Pages 주소 손님은 계속 네이버 구매만 본다.
+  var ON = /(^|\.)sikseoul\.com$|\.workers\.dev$|^localhost$|^127\.0\.0\.1$/.test(location.hostname) && !!C.supabaseKey;
 
   // 배송비 규칙 — supabase settings 표와 같은 값 (표시용)
   var SHIP = { fee: 3000, freeOver: 30000, jeju: 2000 };
