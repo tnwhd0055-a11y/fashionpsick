@@ -10,8 +10,8 @@
   // 예전 GitHub Pages 주소 손님은 계속 네이버 구매만 본다.
   var ON = /(^|\.)sikseoul\.com$|\.workers\.dev$|^localhost$|^127\.0\.0\.1$/.test(location.hostname) && !!C.supabaseKey;
 
-  // 배송비 규칙 — supabase settings 표와 같은 값 (표시용)
-  var SHIP = { fee: 3000, freeOver: 30000, jeju: 2000 };
+  // 배송비 규칙 (표시용) — 아래 loadLive() 가 DB 설정으로 덮어쓴다. 실제 청구는 DB 가 계산한다.
+  var SHIP = { fee: 3000, freeOver: 30000, jeju: 2000, remote: 3000, remoteZips: "40200-40240" };
 
   var read = function (k, store) { try { return JSON.parse((store || localStorage).getItem(k)) || null; } catch (e) { return null; } };
   var write = function (k, v, store) { try { (store || localStorage).setItem(k, JSON.stringify(v)); } catch (e) {} };
@@ -49,8 +49,16 @@
   function startCheckout(items, fromCart) { write(CHECKOUT, { items: items, fromCart: !!fromCart }, sessionStorage); }
   function checkoutItems() { return read(CHECKOUT, sessionStorage) || { items: cart(), fromCart: true }; }
 
+  function isRemote(zip) {
+    if (!/^\d{5}$/.test(zip || "")) return false;
+    var z = +zip;
+    return String(SHIP.remoteZips || "").split(",").some(function (r) {
+      var m = r.trim().match(/^(\d{5})(?:\s*-\s*(\d{5}))?$/);
+      return m && z >= +m[1] && z <= +(m[2] || m[1]);
+    });
+  }
   function shippingFee(sum, zip) {
-    return (sum >= SHIP.freeOver ? 0 : SHIP.fee) + (/^63/.test(zip || "") ? SHIP.jeju : 0);
+    return (sum >= SHIP.freeOver ? 0 : SHIP.fee) + (/^63/.test(zip || "") ? SHIP.jeju : isRemote(zip) ? SHIP.remote : 0);
   }
 
   // ── Supabase 호출 ──
@@ -118,6 +126,44 @@
       .then(function (r) { return r && r.ok ? r : null; }).catch(function () { return null; });
   }
   function myOrders() { return memberToken().then(function (t) { return t ? rpc("my_orders", {}, t) : []; }); }
+
+  // ── 관리자가 바꾼 가격·재고·배송비를 화면에 반영 ──
+  // 가격과 품절 여부는 DB(관리자 화면)가 정본이다. data.js 값은 DB 를 못 읽었을 때만 쓰인다.
+  function loadLive() {
+    if (!C.supabaseKey) return;
+    rpc("shipping_rules", {}).then(function (r) { if (r) Object.assign(SHIP, r); }).catch(function () {});
+    call("/rest/v1/products?select=id,option,price,stock,active", { headers: headers() }).then(function (rows) {
+      var by = {};
+      rows.forEach(function (r) { (by[r.id] = by[r.id] || []).push(r); });
+      window.SIK_DATA.products.forEach(function (p) {
+        var rs = by[p.id];
+        if (!rs) return;
+        p.price = rs[0].price;
+        p.soldOut = rs.every(function (r) { return !r.active || r.stock <= 0; });
+      });
+      window.dispatchEvent(new Event("sik-prices"));
+    }).catch(function () {});
+  }
+
+  // 관리자: 상품 한 줄(옵션) 고치기 / 설정 읽기·고치기
+  function adminProducts() {
+    return adminToken().then(function (t) { return call("/rest/v1/products?select=*&order=sort", { headers: headers(t) }); });
+  }
+  function adminSaveProduct(id, option, patch) {
+    return adminToken().then(function (t) {
+      var h = headers(t); h.Prefer = "return=representation";
+      return call("/rest/v1/products?id=eq." + encodeURIComponent(id) + "&option=eq." + encodeURIComponent(option), { method: "PATCH", headers: h, body: JSON.stringify(patch) });
+    }).then(function (r) { if (!r || !r.length) throw new Error("저장하지 못했습니다 (권한)"); loadLive(); return r[0]; });
+  }
+  function adminSettings() {
+    return adminToken().then(function (t) { return call("/rest/v1/settings?id=eq.1&select=*", { headers: headers(t) }); }).then(function (r) { return r[0]; });
+  }
+  function adminSaveSettings(patch) {
+    return adminToken().then(function (t) {
+      var h = headers(t); h.Prefer = "return=representation";
+      return call("/rest/v1/settings?id=eq.1", { method: "PATCH", headers: h, body: JSON.stringify(patch) });
+    }).then(function (r) { if (!r || !r.length) throw new Error("저장하지 못했습니다 (권한)"); loadLive(); return r[0]; });
+  }
 
   function createOrder(items, buyer, payMethod) {
     return memberToken().then(function (t) { return rpc("create_order", {
@@ -258,7 +304,9 @@
     stock: stock, createOrder: createOrder, lastOrder: lastOrder, lookup: lookup, errorText: errorText,
     adminSession: adminSession, adminLogin: adminLogin, adminLogout: adminLogout, adminOrders: adminOrders, adminUpdate: adminUpdate,
     pay: pay, finishPayment: finishPayment, adminRefund: adminRefund,
+    loadLive: loadLive, adminProducts: adminProducts, adminSaveProduct: adminSaveProduct, adminSettings: adminSettings, adminSaveSettings: adminSaveSettings,
     member: member, kakaoLogin: kakaoLogin, logout: logout, takeLoginReturn: takeLoginReturn, kakaoProfile: kakaoProfile, myOrders: myOrders,
     trackUrl: trackUrl, won: won,
   };
+  loadLive();
 })();

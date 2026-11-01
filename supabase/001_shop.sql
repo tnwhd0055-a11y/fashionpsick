@@ -165,8 +165,7 @@ begin
     v_sum := v_sum + v_p.price * v_qty;
   end loop;
 
-  v_fee := case when v_sum >= s.free_shipping_over then 0 else s.shipping_fee end
-         + case when v_zip like '63%' then s.jeju_extra_fee else 0 end;
+  v_fee := public.shipping_fee_for(v_sum, v_zip);   -- 006_admin_settings.sql (기본 + 제주 + 도서산간)
   update orders set items_amount = v_sum, shipping_fee = v_fee, amount = v_sum + v_fee where id = v_id;
 
   return jsonb_build_object(

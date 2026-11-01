@@ -145,6 +145,14 @@
       return () => window.removeEventListener("hashchange", onHash);
     }, []);
 
+    // 관리자 화면에서 바꾼 가격·품절이 DB 에서 도착하면 다시 그린다 (shop.js loadLive)
+    const [, setTick] = React.useState(0);
+    React.useEffect(() => {
+      const on = () => setTick((t) => t + 1);
+      window.addEventListener("sik-prices", on);
+      return () => window.removeEventListener("sik-prices", on);
+    }, []);
+
     const go = (next) => {
       window.history.replaceState(entry(viewRef.current, window.scrollY), "");  // 떠나는 자리 기억
       window.history.pushState(entry(next, 0), "");

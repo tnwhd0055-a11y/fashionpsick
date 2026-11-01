@@ -89,6 +89,11 @@ const SHOP_CSS = `
 .sh-member{border:1px solid var(--warm-line);padding:16px;margin:0 0 8px;display:flex;flex-direction:column;gap:10px}
 .sh-member p{margin:0;font-size:13px;color:var(--mute);line-height:1.6}
 .sh-member .who{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;color:var(--ink)}
+.sh-ptable{width:100%;border-collapse:collapse;font-size:13px}
+.sh-ptable th,.sh-ptable td{border-bottom:1px solid var(--warm-line);padding:8px 6px;text-align:left;white-space:nowrap}
+.sh-ptable th{font-weight:600;color:var(--mute);font-size:12px}
+.sh-ptable input[inputmode]{height:32px;border:1px solid var(--hairline);padding:0 6px;font:inherit;font-size:13px;border-radius:0}
+.sh-ptable input[type=checkbox]{width:18px;height:18px;accent-color:var(--ink)}
 .sh-test{background:#fff4d6;color:#7a5200;font-family:var(--font-sans);font-size:12px;text-align:center;padding:8px var(--sk-pad);line-height:1.5}
 @media (max-width:620px){
   .sh-pay{grid-template-columns:1fr 1fr}
@@ -285,7 +290,7 @@ function Summary({ items, zip }) {
       </dl>
       <p className="sh-note">
         {sum < S.SHIP.freeOver && sum > 0 ? `${S.won(S.SHIP.freeOver - sum)} 더 담으면 무료배송입니다. ` : ""}
-        제주 지역은 {S.won(S.SHIP.jeju)}이 추가됩니다.
+        제주 {S.won(S.SHIP.jeju)}, 도서산간 {S.won(S.SHIP.remote)}이 추가됩니다.
       </p>
     </React.Fragment>
   );
@@ -715,6 +720,7 @@ function AdminPage({ nav }) {
   const [err, setErr] = React.useState("");
   const [busy, setBusy] = React.useState("");
   const [ship, setShip] = React.useState({});
+  const [view, setView] = React.useState("orders");   // 주문 / 상품·재고 / 배송비·계좌
 
   const load = () => S.adminOrders().then(setOrders).catch((e) => {
     if (e.status === 401) { S.adminLogout(); setSession(null); } else setErr(S.errorText(e));
@@ -788,6 +794,14 @@ function AdminPage({ nav }) {
           </div>
         </div>
 
+        <div className="sh-tabs" role="group" aria-label="관리 메뉴" style={{ borderBottom: "1px solid var(--warm-line)", paddingBottom: 14 }}>
+          {[["orders", "주문"], ["products", "상품 · 재고"], ["settings", "배송비 · 계좌"]].map(([k, l]) => (
+            <button key={k} className="sh-chip" aria-pressed={view === k} onClick={() => setView(k)} style={{ fontWeight: 700 }}>{l}</button>
+          ))}
+        </div>
+        {view === "products" && <AdminProducts />}
+        {view === "settings" && <AdminSettings />}
+        {view === "orders" && <React.Fragment>
         <div className="sh-tabs" role="group" aria-label="주문 상태">
           {TABS.map(([k, label, fn]) => (
             <button key={k} className="sh-chip" aria-pressed={tab === k} onClick={() => setTab(k)}>
@@ -856,7 +870,97 @@ function AdminPage({ nav }) {
             </article>
           );
         })}
+        </React.Fragment>}
       </div>
+    </div>
+  );
+}
+
+/* 관리자 — 상품 가격·재고. 여기서 바꾸면 사이트 가격·품절 표시와 결제 금액이 같이 바뀐다 */
+function AdminProducts() {
+  const S = window.SIK_SHOP;
+  const [rows, setRows] = React.useState(null);
+  const [edit, setEdit] = React.useState({});
+  const [msg, setMsg] = React.useState("");
+  const load = () => S.adminProducts().then(setRows).catch((e) => setMsg(e.message));
+  React.useEffect(() => { load(); }, []);
+  const key = (r) => r.id + "|" + r.option;
+  const cur = (r) => ({ price: r.price, stock: r.stock, active: r.active, ...(edit[key(r)] || {}) });
+  const change = (r, k, v) => setEdit({ ...edit, [key(r)]: { ...(edit[key(r)] || {}), [k]: v } });
+  const save = (r) => {
+    const c = cur(r);
+    const patch = { price: Math.max(0, parseInt(c.price, 10) || 0), stock: Math.max(0, parseInt(c.stock, 10) || 0), active: !!c.active };
+    S.adminSaveProduct(r.id, r.option, patch)
+      .then(() => { const n = { ...edit }; delete n[key(r)]; setEdit(n); setMsg(`${r.name}${r.option ? " " + r.option : ""} 저장했습니다.`); load(); })
+      .catch((e) => setMsg(e.message));
+  };
+  if (!rows) return <div className="sh-empty">{msg || "불러오는 중…"}</div>;
+  return (
+    <div>
+      <p className="sh-note" style={{ marginBottom: 12 }}>가격·재고를 고치고 <b>저장</b>을 누르면 사이트에 바로 반영됩니다. 재고가 0이면 그 옵션은 품절로 표시되고, '판매'를 끄면 주문을 받지 않습니다.</p>
+      {msg && <div className="sh-err" style={{ background: "var(--soft-cloud)", color: "var(--ink)" }} role="status">{msg}</div>}
+      <div className="lg-tbl" style={{ overflowX: "auto" }}>
+        <table className="sh-ptable">
+          <thead><tr><th>상품</th><th>옵션</th><th>가격(원)</th><th>재고</th><th>판매</th><th></th></tr></thead>
+          <tbody>
+            {rows.map((r) => {
+              const c = cur(r), dirty = !!edit[key(r)];
+              return (
+                <tr key={key(r)}>
+                  <td>{r.name}</td>
+                  <td>{r.option || "—"}</td>
+                  <td><input aria-label={`${r.name} 가격`} inputMode="numeric" value={c.price} onChange={(e) => change(r, "price", e.target.value.replace(/\D/g, ""))} style={{ width: 90 }} /></td>
+                  <td><input aria-label={`${r.name} ${r.option} 재고`} inputMode="numeric" value={c.stock} onChange={(e) => change(r, "stock", e.target.value.replace(/\D/g, ""))} style={{ width: 56 }} /></td>
+                  <td><input type="checkbox" aria-label={`${r.name} ${r.option} 판매`} checked={!!c.active} onChange={(e) => change(r, "active", e.target.checked)} /></td>
+                  <td><button className="sh-btn xs" disabled={!dirty} onClick={() => save(r)}>저장</button></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="sh-note" style={{ marginTop: 12 }}>새 상품이나 새 사이즈를 추가하는 건 아직 여기서 안 됩니다. 상품 사진·설명과 함께 추가해야 해서 사이트 파일(data.js)도 같이 바꿔야 합니다.</p>
+    </div>
+  );
+}
+
+/* 관리자 — 배송비 · 도서산간 · 무통장 계좌 */
+function AdminSettings() {
+  const S = window.SIK_SHOP;
+  const [f, setF] = React.useState(null);
+  const [msg, setMsg] = React.useState("");
+  React.useEffect(() => { S.adminSettings().then(setF).catch((e) => setMsg(e.message)); }, []);
+  if (!f) return <div className="sh-empty">{msg || "불러오는 중…"}</div>;
+  const num = (k) => ({ value: f[k], inputMode: "numeric", className: "sh-in", onChange: (e) => setF({ ...f, [k]: e.target.value.replace(/\D/g, "") }) });
+  const txt = (k) => ({ value: f[k], className: "sh-in", onChange: (e) => setF({ ...f, [k]: e.target.value }) });
+  const save = () => {
+    const ints = ["shipping_fee", "free_shipping_over", "jeju_extra_fee", "remote_extra_fee", "deposit_days"];
+    const patch = {};
+    ints.forEach((k) => (patch[k] = parseInt(f[k], 10) || 0));
+    ["remote_zips", "bank_name", "bank_account", "bank_holder"].forEach((k) => (patch[k] = String(f[k] || "").trim()));
+    S.adminSaveSettings(patch).then((r) => { setF(r); setMsg("저장했습니다. 새로 들어오는 주문부터 적용됩니다."); }).catch((e) => setMsg(e.message));
+  };
+  return (
+    <div style={{ maxWidth: 560 }}>
+      {msg && <div className="sh-err" style={{ background: "var(--soft-cloud)", color: "var(--ink)" }} role="status">{msg}</div>}
+      <h2 style={{ fontSize: 15, margin: "8px 0 12px" }}>배송비</h2>
+      <div className="sh-pay" style={{ gridTemplateColumns: "1fr 1fr" }}>
+        <div className="sh-field"><label>기본 배송비(원)</label><input {...num("shipping_fee")} /></div>
+        <div className="sh-field"><label>무료배송 기준(원 이상)</label><input {...num("free_shipping_over")} /></div>
+        <div className="sh-field"><label>제주 추가(원)</label><input {...num("jeju_extra_fee")} /></div>
+        <div className="sh-field"><label>도서산간 추가(원)</label><input {...num("remote_extra_fee")} /></div>
+      </div>
+      <div className="sh-field">
+        <label>도서산간 우편번호</label>
+        <textarea className="sh-in" rows={4} style={{ height: "auto", padding: 12 }} {...txt("remote_zips")} />
+        <p className="sh-note">쉼표로 구분해서 우편번호 하나(40200) 또는 구간(40200-40240)을 적습니다. 택배사 계약 때 받는 <b>도서산간 지역 우편번호 목록</b>을 그대로 옮기면 됩니다. 제주(63으로 시작)는 따로 계산됩니다.</p>
+      </div>
+      <h2 style={{ fontSize: 15, margin: "24px 0 12px" }}>무통장입금 계좌</h2>
+      <div className="sh-field"><label>은행</label><input {...txt("bank_name")} /></div>
+      <div className="sh-field"><label>계좌번호</label><input {...txt("bank_account")} /></div>
+      <div className="sh-field"><label>예금주</label><input {...txt("bank_holder")} /></div>
+      <div className="sh-field"><label>입금 기한(일)</label><input {...num("deposit_days")} /></div>
+      <button className="sh-btn sh-full" onClick={save}>저장</button>
     </div>
   );
 }
