@@ -23,7 +23,7 @@
       buy: "https://m.smartstore.naver.com/athleticstore/products/13635362111",
       image: "assets/necklace-model.jpg",
       frontImage: "assets/necklace-front-sq.jpg",   // 마우스 올렸을 때 사진 — 정사각형 (necklace-1.png 은 가로로 길어서 타일에서 작게 보였다)
-      gallery: ["assets/necklace-model.jpg", "assets/necklace-1.png", "assets/necklace-2.png", "assets/necklace-3.png"],
+      gallery: ["assets/necklace-model.jpg", "assets/necklace-front-sq.jpg", "assets/necklace-2.png", "assets/necklace-3.png"],
       swatches: [SW.blackbrown], length: "42 cm + 5 cm",
       detail: "stone",
       spec: [["브랜드", "SIK"], ["제품명", "내추럴 스톤 비즈 목걸이"], ["컬러", "블랙브라운"], ["소재", "내추럴 스톤 비즈"], ["사이즈", "42cm + 연장 체인 5cm"], ["제조국", "중국"]],
