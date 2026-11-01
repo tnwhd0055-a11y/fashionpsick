@@ -1,0 +1,6 @@
+# Cloudflare 에 올리지 않을 것 (사이트 화면과 무관)
+.git
+.gitignore
+.assetsignore
+supabase
+*.md
