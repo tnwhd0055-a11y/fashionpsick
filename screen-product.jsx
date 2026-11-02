@@ -127,6 +127,8 @@ function ProductPage({ nav, openProduct, productId }) {
 
       {product.detail === "stone" ? <StoneDetail product={product} /> : <GenericDetail product={product} gallery={gallery} />}
 
+      {window.SIK_SHOP && window.SIK_SHOP.on && window.ProductCommunity && <window.ProductCommunity product={product} />}
+
       <window.ProductInfoNotice product={product} />
 
       <SikFooter nav={nav} />

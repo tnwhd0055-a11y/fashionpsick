@@ -795,12 +795,13 @@ function AdminPage({ nav }) {
         </div>
 
         <div className="sh-tabs" role="group" aria-label="관리 메뉴" style={{ borderBottom: "1px solid var(--warm-line)", paddingBottom: 14 }}>
-          {[["orders", "주문"], ["products", "상품 · 재고"], ["settings", "배송비 · 계좌"]].map(([k, l]) => (
+          {[["orders", "주문"], ["products", "상품 · 재고"], ["community", "문의 · 후기"], ["settings", "배송비 · 계좌 · 알림"]].map(([k, l]) => (
             <button key={k} className="sh-chip" aria-pressed={view === k} onClick={() => setView(k)} style={{ fontWeight: 700 }}>{l}</button>
           ))}
         </div>
         {view === "products" && <AdminProducts />}
-        {view === "settings" && <AdminSettings />}
+        {view === "community" && window.AdminCommunity && <window.AdminCommunity />}
+        {view === "settings" && <React.Fragment>{window.AdminNotify && <window.AdminNotify />}<AdminSettings /></React.Fragment>}
         {view === "orders" && <React.Fragment>
         <div className="sh-tabs" role="group" aria-label="주문 상태">
           {TABS.map(([k, label, fn]) => (

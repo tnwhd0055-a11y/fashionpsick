@@ -165,6 +165,47 @@
     }).then(function (r) { if (!r || !r.length) throw new Error("저장하지 못했습니다 (권한)"); loadLive(); return r[0]; });
   }
 
+  // ── 상품 문의(Q&A) · 구매 후기 ──
+  function qnaList(pid) { return rpc("qna_list", { p_product_id: pid }); }
+  function qnaAsk(pid, f) { return rpc("qna_ask", { p_product_id: pid, p_author: f.author, p_password: f.password, p_question: f.question, p_private: !!f.isPrivate }); }
+  function qnaView(id, pw) { return rpc("qna_view", { p_id: id, p_password: pw }); }
+  function reviewList(pid) { return rpc("review_list", { p_product_id: pid }); }
+  function reviewTargets(orderNo, phone) { return memberToken().then(function (t) { return rpc("review_targets", { p_order_no: orderNo, p_phone: phone }, t); }); }
+  // 후기 사진: 브라우저에서 긴 변 1200px WebP 로 줄여서 올린다 (원본 그대로 올리면 느리고 저장소가 금방 찬다)
+  function uploadReviewPhoto(file) {
+    return new Promise(function (ok, fail) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        var k = Math.min(1, 1200 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (b) { b ? ok(b) : fail(new Error("사진을 읽지 못했습니다.")); }, "image/webp", 0.85);
+      };
+      img.onerror = function () { fail(new Error("사진을 읽지 못했습니다.")); };
+      img.src = url;
+    }).then(function (blob) {
+      var path = "reviews/" + Date.now() + "-" + Math.random().toString(36).slice(2, 10) + ".webp";
+      return fetch(C.supabaseUrl + "/storage/v1/object/review-photos/" + path, { method: "POST", headers: { apikey: C.supabaseKey, "Content-Type": "image/webp" }, body: blob })
+        .then(function (r) { if (!r.ok) throw new Error("사진을 올리지 못했습니다."); return C.supabaseUrl + "/storage/v1/object/public/review-photos/" + path; });
+    });
+  }
+  function reviewCreate(f) {
+    return memberToken().then(function (t) {
+      return rpc("review_create", { p_order_no: f.orderNo, p_phone: f.phone, p_product_id: f.productId, p_option: f.option || "",
+        p_author: f.author, p_rating: f.rating, p_body: f.body, p_photos: f.photos || [] }, t);
+    });
+  }
+  // 관리자: 문의·후기 목록, 답변·숨기기, 카톡 알림
+  function adminQna() { return adminToken().then(function (t) { return call("/rest/v1/qna?select=id,product_id,author,is_private,question,answer,hidden,created_at&order=created_at.desc&limit=200", { headers: headers(t) }); }); }
+  function adminQnaSave(id, answer, hidden) { return adminToken().then(function (t) { return rpc("qna_admin", { p_id: id, p_answer: answer, p_hidden: hidden }, t); }); }
+  function adminReviews() { return adminToken().then(function (t) { return call("/rest/v1/reviews?select=id,product_id,option,author,rating,body,photos,hidden,created_at&order=created_at.desc&limit=200", { headers: headers(t) }); }); }
+  function adminReviewHide(id, hidden) { return adminToken().then(function (t) { return rpc("review_admin", { p_id: id, p_hidden: hidden }, t); }); }
+  function notifyStatus() { return adminToken().then(function (t) { return rpc("notify_status", {}, t); }); }
+  function notifyAction(action, extra) {
+    return adminToken().then(function (t) { return call("/functions/v1/notify", { method: "POST", headers: headers(t), body: JSON.stringify(Object.assign({ action: action }, extra || {})) }); });
+  }
+
   function createOrder(items, buyer, payMethod) {
     return memberToken().then(function (t) { return rpc("create_order", {
       p_items: items.map(function (it) { return { id: it.id, option: it.option || "", qty: it.qty }; }),
@@ -192,6 +233,10 @@
       BAD_STATUS: "지금 상태에서는 할 수 없는 처리입니다.",
       TRACKING: "택배사와 송장번호를 입력해 주세요.",
       NEEDS_REFUND: "카드·간편결제 주문은 결제 취소(환불)를 먼저 해야 합니다.",
+      QNA: ({ author: "이름을 적어 주세요.", password: "비밀번호는 4자리 이상으로 정해 주세요.", question: "문의 내용을 적어 주세요.", slow: "잠시 후 다시 등록해 주세요." })[what] || "문의를 등록하지 못했습니다.",
+      REVIEW: ({ rating: "별점을 골라 주세요.", body: "후기를 5자 이상 적어 주세요.", photos: "사진은 4장까지 올릴 수 있습니다.", dup: "이 상품은 이미 후기를 쓰셨습니다." })[what] || "후기를 등록하지 못했습니다.",
+      NO_ORDER: "주문을 찾지 못했습니다. 주문번호와 휴대폰 번호를 확인해 주세요.",
+      NOT_SHIPPED: "상품이 발송된 뒤에 후기를 쓸 수 있습니다.",
     })[code] || "처리하지 못했습니다. (" + code + ")";
   }
 
@@ -304,6 +349,8 @@
     stock: stock, createOrder: createOrder, lastOrder: lastOrder, lookup: lookup, errorText: errorText,
     adminSession: adminSession, adminLogin: adminLogin, adminLogout: adminLogout, adminOrders: adminOrders, adminUpdate: adminUpdate,
     pay: pay, finishPayment: finishPayment, adminRefund: adminRefund,
+    qnaList: qnaList, qnaAsk: qnaAsk, qnaView: qnaView, reviewList: reviewList, reviewTargets: reviewTargets, reviewCreate: reviewCreate, uploadReviewPhoto: uploadReviewPhoto,
+    adminQna: adminQna, adminQnaSave: adminQnaSave, adminReviews: adminReviews, adminReviewHide: adminReviewHide, notifyStatus: notifyStatus, notifyAction: notifyAction,
     loadLive: loadLive, adminProducts: adminProducts, adminSaveProduct: adminSaveProduct, adminSettings: adminSettings, adminSaveSettings: adminSaveSettings,
     member: member, kakaoLogin: kakaoLogin, logout: logout, takeLoginReturn: takeLoginReturn, kakaoProfile: kakaoProfile, myOrders: myOrders,
     trackUrl: trackUrl, won: won,
