@@ -26,6 +26,8 @@
       gallery: ["assets/necklace-model.jpg", "assets/necklace-front-sq.jpg", "assets/necklace-2.png", "assets/necklace-3.png"],
       swatches: [SW.blackbrown], length: "42 cm + 5 cm",
       detail: "stone",
+      // 실제 착용 사진 (네이버 상세페이지에 있던 것, 2026-11 가져옴) — 상세 아래 'Styled by SIK' 에 나온다
+      realShots: ["assets/stone-real-1.jpg", "assets/stone-real-2.jpg", "assets/stone-real-3.jpg"],
       spec: [["브랜드", "SIK"], ["제품명", "내추럴 스톤 비즈 목걸이"], ["컬러", "블랙브라운"], ["소재", "내추럴 스톤 비즈"], ["사이즈", "42cm + 연장 체인 5cm"], ["제조국", "중국"]],
     },
 
@@ -40,6 +42,7 @@
       frontImage: "assets/blackpoint-front.jpg",
       gallery: ["assets/blackpoint-worn.jpg", "assets/blackpoint-full.jpg", "assets/blackpoint-front.jpg", "assets/blackpoint-clasp.jpg"],
       swatches: [SW.black], length: "43 cm + 5 cm",
+      realShots: ["assets/blackpoint-real-1.jpg", "assets/blackpoint-real-2.jpg", "assets/blackpoint-real-3.jpg"],
       detail: "generic",
       spec: [["브랜드", "SIK"], ["제품명", "플라티즈마 블랙 비즈 목걸이"], ["컬러", "블랙"], ["소재", "블랙 시드비즈 · 담수진주 · 스테인리스 클래스프"], ["사이즈", "43cm + 연장 체인 5cm"], ["제조국", "중국"]],
       blurb: "블랙 시드비즈에 담수진주와 포인트 비즈를 더한 데일리 목걸이. 단독으로도, 레이어드로도 잘 어울립니다.",

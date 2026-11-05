@@ -136,6 +136,27 @@ function ProductPage({ nav, openProduct, productId }) {
   );
 }
 
+/* ── 실제 착용 사진 묶음 (product.realShots) — 스튜디오 컷 아래에 붙는다 ─── */
+function RealShots({ product }) {
+  const shots = product.realShots || [];
+  if (!shots.length) return null;
+  const eyebrow = { fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--ink)" };
+  return (
+    <div style={{ padding: "var(--space-4xl) 0 var(--space-2xl)" }}>
+      <div style={{ textAlign: "center", marginBottom: "var(--space-xl)" }}>
+        <div style={eyebrow}>Styled by SIK</div>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, color: "var(--mute)", margin: "10px 0 0" }}>운동할 때도, 평소에도 — 실제로 착용한 모습입니다.</p>
+      </div>
+      {shots.map((src, i) => (
+        <React.Fragment key={src}>
+          <img src={src} alt={`${product.name} 착용 사진 ${i + 1}`} loading="lazy" style={{ display: "block", width: "100%", height: "auto", background: "var(--soft-cloud)" }} />
+          {i < shots.length - 1 && <div style={{ height: "var(--space-md)" }} />}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
 /* ── 신규 제품 공통 상세 (갤러리 + 스펙 + 노티스) ─────────────── */
 function GenericDetail({ product, gallery }) {
   const img = { display: "block", width: "100%", height: "auto", background: "var(--soft-cloud)" };
@@ -171,6 +192,8 @@ function GenericDetail({ product, gallery }) {
             {i < detailShots.length - 1 && <div style={{ height: "var(--space-md)" }} />}
           </React.Fragment>
         ))}
+
+        <RealShots product={product} />
 
         {Array.isArray(product.spec) && (
           <div style={{ textAlign: "center", padding: "var(--space-4xl) 0" }}>
@@ -248,6 +271,7 @@ function StoneDetail({ product }) {
             사용 후에는 부드러운 천으로 가볍게 닦아 습기가 적은 곳에 보관해 주세요.
           </p>
         </div>
+        <RealShots product={product} />
         <img src={A + "detail-macro.jpg"} alt="" style={img} />
         <div style={{ height: "var(--space-md)" }} />
         <img src={A + "detail-v.jpg"} alt="" style={img} />
