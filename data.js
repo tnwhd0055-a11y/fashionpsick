@@ -202,6 +202,9 @@
   var IG = "https://www.instagram.com/fashionpsick/";
   window.SIK_INSTAGRAM = IG;
 
+  // 고객 문의 — 카카오톡 채널 sikseoul (@sikseoul). /chat 은 바로 1:1 채팅창이 열린다
+  window.SIK_KAKAO_CHAT = "https://pf.kakao.com/_xcxotWX/chat";
+
   // Naver SmartStore — 모바일 URL(m.)이라 폰에서 네이버 앱으로 잘 넘어감 (로그인 세션 유지 → 구매전환↑).
   // 제품별 링크는 각 product 의 buy 필드. 아직 스토어에 없는 제품은 이 스토어 홈으로 떨어진다.
   window.SIK_SMARTSTORE = "https://m.smartstore.naver.com/athleticstore";

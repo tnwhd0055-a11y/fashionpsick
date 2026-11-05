@@ -85,6 +85,12 @@ const SIK_UI_CSS = `
   .sk-foot-grid>:first-child{grid-column:1/-1}
   .sk-foot-end{flex-direction:column;gap:10px}
 }
+/* 카톡 문의 버튼 — 오른쪽 아래 고정. 카카오 노란색(#FEE500)은 카카오 가이드 그대로 */
+.sk-kakao-fab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:50;
+  height:48px;padding:0 16px 0 13px;border-radius:24px;background:#FEE500;color:rgba(0,0,0,.85);text-decoration:none;
+  display:flex;align-items:center;gap:6px;font-family:var(--font-sans);font-size:14px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.sk-kakao-fab:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+@media (max-width:620px){.sk-kakao-fab{height:44px;padding:0 13px 0 11px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){ .sk-nav a::after{transition:none} }
 `;
 
@@ -113,6 +119,12 @@ function SikHeader({ nav, active }) {
 
       {/* 소문자 문구라 대문자용 자간(sk-cap-track)은 붙이지 않는다 */}
       <p className="sk-rail sk-ser">{window.SIK_TAGLINE}</p>
+      {window.SIK_KAKAO_CHAT && (
+        <a className="sk-kakao-fab" href={window.SIK_KAKAO_CHAT} target="_blank" rel="noreferrer" aria-label="카카오톡으로 문의하기">
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.32 4.66 6.74l-.95 3.48c-.08.3.26.54.52.37l4.15-2.75c.53.06 1.07.1 1.62.1 5.52 0 10-3.58 10-8S17.52 3 12 3z" /></svg>
+          <span>문의</span>
+        </a>
+      )}
 
       <header className="sk-head">
         <button className="sk-burger" aria-label="메뉴 열기" aria-expanded={open} onClick={() => setOpen(true)}>
@@ -217,6 +229,7 @@ function SikFooter({ nav }) {
             고객센터 <a href={"tel:" + BIZ.tel.replace(/-/g, "")}>{BIZ.tel}</a>
             {" · "}호스팅 {BIZ.host}<br />
             <a href={IG} target="_blank" rel="noreferrer">instagram @fashionpsick</a>
+            {" · "}<a href={window.SIK_KAKAO_CHAT} target="_blank" rel="noreferrer">카카오톡 @sikseoul</a>
           </p>
         </div>
         <div>
@@ -232,6 +245,7 @@ function SikFooter({ nav }) {
             <li><a href={IG} target="_blank" rel="noreferrer">INSTAGRAM</a></li>
             <li><a href={window.SIK_SMARTSTORE} target="_blank" rel="noreferrer">NAVER STORE</a></li>
             {window.SIK_SHOP && window.SIK_SHOP.on && <li><a href="#" onClick={goto("lookup")}>주문 조회</a></li>}
+            <li><a href={window.SIK_KAKAO_CHAT} target="_blank" rel="noreferrer">카톡 문의</a></li>
           </ul>
         </div>
       </div>
