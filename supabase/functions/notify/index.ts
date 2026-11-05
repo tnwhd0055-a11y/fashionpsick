@@ -11,7 +11,8 @@ const SITE = "https://sikseoul.com";
 
 const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info", "Access-Control-Allow-Methods": "GET, POST, OPTIONS" };
 const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status, headers: { ...cors, "Content-Type": "application/json" } });
-const page = (msg: string) => new Response(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><body style="font-family:sans-serif;padding:40px;text-align:center"><h2>${msg}</h2><p><a href="${SITE}/#admin">관리자 화면으로</a></p>`, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+// Supabase 함수는 HTML 을 글자 그대로(text/plain) 보내서 화면이 깨진다 → 결과 코드만 붙여 관리자 화면으로 돌려보낸다
+const page = (code: string) => new Response(null, { status: 302, headers: { Location: `${SITE}/?notify=${code}#admin` } });
 
 const sb = async (path: string, init: RequestInit = {}) => {
   const r = await fetch(SB_URL + path, { ...init, headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, "Content-Type": "application/json", ...(init.headers || {}) } });
@@ -101,12 +102,12 @@ Deno.serve(async (req) => {
     if (req.method === "GET" && (url.searchParams.get("code") || url.searchParams.get("error"))) {
       const c = await config();
       const [ts, sig] = String(url.searchParams.get("state") || "").split(".");
-      if (!ts || sig !== (await hmac(c.hook_secret, ts)) || Date.now() - Number(ts) > 15 * 60_000) return page("연결 요청이 만료되었습니다. 관리자 화면에서 다시 눌러 주세요.");
-      if (url.searchParams.get("error")) return page("카카오 동의가 취소되었습니다.");
+      if (!ts || sig !== (await hmac(c.hook_secret, ts)) || Date.now() - Number(ts) > 15 * 60_000) return page("expired");
+      if (url.searchParams.get("error")) return page("cancel");
       const t = await kakaoToken({ grant_type: "authorization_code", redirect_uri: SELF, code: url.searchParams.get("code")! });
       await saveConfig({ kakao_refresh: t.refresh_token, kakao_access: t.access_token, kakao_access_until: new Date(Date.now() + t.expires_in * 1000).toISOString(), kakao_connected_at: new Date().toISOString(), enabled: true });
       const sent = await sendMemo("✅ SIK 주문 알림이 연결되었습니다.\n새 주문·문의·후기가 생기면 여기로 알려드려요.");
-      return page(sent.ok ? "카톡 알림이 연결되었습니다 ✅ 카카오톡 '나와의 채팅'을 확인하세요." : "연결은 됐지만 시험 메시지를 못 보냈습니다. 카카오 동의항목에서 '카카오톡 메시지 전송'을 켰는지 확인해 주세요.");
+      return page(sent.ok ? "ok" : "nosend");
     }
     if (req.method !== "POST") return json({ ok: false }, 405);
     const body = await req.json().catch(() => ({}));

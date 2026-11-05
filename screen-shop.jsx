@@ -720,7 +720,8 @@ function AdminPage({ nav }) {
   const [err, setErr] = React.useState("");
   const [busy, setBusy] = React.useState("");
   const [ship, setShip] = React.useState({});
-  const [view, setView] = React.useState("orders");   // 주문 / 상품·재고 / 배송비·계좌
+  // 카톡 알림 연결에서 돌아오면(?notify=…) 바로 알림 설정 탭을 연다
+  const [view, setView] = React.useState(() => (/[?&]notify=/.test(location.search) ? "settings" : "orders"));   // 주문 / 상품·재고 / 배송비·계좌
 
   const load = () => S.adminOrders().then(setOrders).catch((e) => {
     if (e.status === 401) { S.adminLogout(); setSession(null); } else setErr(S.errorText(e));

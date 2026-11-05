@@ -311,7 +311,14 @@ function AdminCommunity() {
 function AdminNotify() {
   const S = window.SIK_SHOP;
   const [st, setSt] = React.useState(null);
-  const [msg, setMsg] = React.useState("");
+  // 카카오 동의 후 돌아오면 주소에 ?notify=결과 가 붙어 온다
+  const [msg, setMsg] = React.useState(() => {
+    const r = new URLSearchParams(location.search).get("notify");
+    if (r) history.replaceState(history.state, "", location.pathname + location.hash);
+    return ({ ok: "✅ 카톡 알림이 연결되었습니다. 카카오톡 '나와의 채팅'에 확인 메시지가 왔는지 보세요.",
+      nosend: "연결은 됐지만 확인 메시지를 못 보냈습니다. 카카오 동의항목에서 '카카오톡 메시지 전송'이 켜져 있는지 확인해 주세요.",
+      expired: "연결 요청 시간이 지났습니다. 다시 눌러 주세요.", cancel: "카카오 동의가 취소되었습니다." })[r] || "";
+  });
   const load = () => S.notifyStatus().then(setSt).catch((e) => setMsg(e.message));
   React.useEffect(load, []);
   const connect = () => S.notifyAction("connect-url").then((r) => { if (r.url) location.href = r.url; else setMsg("연결 주소를 만들지 못했습니다."); }).catch((e) => setMsg(e.message));
