@@ -3,6 +3,7 @@
 (function () {
   var SW = {
     blackbrown: { color: "#2a211b", label: "Black Brown" },
+    tigereye:   { color: "#8a5a26", label: "Tiger Eye" },
     black:      { color: "#1c1c1c", label: "Black" },
     lightgrey:  { color: "#cfcfcf", label: "Light Grey" },
     silver:     { color: "#c9ccd1", label: "Silver" },
@@ -46,6 +47,23 @@
       detail: "generic",
       spec: [["브랜드", "SIK"], ["제품명", "플라티즈마 블랙 비즈 목걸이"], ["컬러", "블랙"], ["소재", "블랙 시드비즈 · 담수진주 · 스테인리스 클래스프"], ["사이즈", "43cm + 연장 체인 5cm"], ["제조국", "중국"]],
       blurb: "블랙 시드비즈에 담수진주와 포인트 비즈를 더한 데일리 목걸이. 단독으로도, 레이어드로도 잘 어울립니다.",
+    },
+
+    // 2-1) 타이거아이 비즈 목걸이 (2026-11 신상) — 사진은 실물을 기준으로 AI 보정 (outputs/tiger-necklace)
+    {
+      id: "tiger-eye-necklace", cat: "Necklaces",
+      name: "타이거아이 비즈 목걸이",
+      subtitle: "Tiger Eye Bead Necklace · Brown",
+      price: 21900, compareAt: 32900, badge: "New",
+      buy: "",   // 네이버 등록 후 채움
+      image: "assets/tiger-worn.jpg",
+      frontImage: "assets/tiger-front.jpg",
+      gallery: ["assets/tiger-worn.jpg", "assets/tiger-front.jpg", "assets/tiger-angle.jpg", "assets/tiger-clasp.jpg", "assets/tiger-macro.jpg"],
+      swatches: [SW.tigereye], length: "40 cm + 7 cm",
+      detail: "generic",
+      // 제조국은 상세 스펙 표에는 안 나오고 맨 아래 상품정보제공고시(작은 글씨)에만 나온다
+      spec: [["브랜드", "SIK"], ["제품명", "타이거아이 비즈 목걸이"], ["컬러", "브라운 (호안석)"], ["소재", "호안석(타이거아이) 비즈 · 써지컬 스틸 체인"], ["사이즈", "40cm + 연장 체인 7cm"], ["제조국", "중국"]],
+      blurb: "호안석(타이거아이)을 얇게 깎은 헤이시 비즈를 촘촘히 엮고 골드 포인트를 더한 목걸이. 빛에 따라 결이 다르게 비치는 자연석이라 단독으로도, 레이어드로도 존재감이 있습니다.",
     },
 
     // 3) 델토이드 메쉬 반팔 셔츠 (구 '메쉬 반팔 셔츠')
