@@ -55,7 +55,7 @@
       name: "타이거아이 비즈 목걸이",
       subtitle: "Tiger Eye Bead Necklace · Brown",
       price: 21900, compareAt: 32900, badge: "New",
-      buy: "",   // 네이버 등록 후 채움
+      buy: "https://m.smartstore.naver.com/athleticstore/products/13853922577",   // 원상품번호 13792385907
       image: "assets/tiger-worn.jpg",
       frontImage: "assets/tiger-front.jpg",
       gallery: ["assets/tiger-worn.jpg", "assets/tiger-front.jpg", "assets/tiger-angle.jpg", "assets/tiger-clasp.jpg", "assets/tiger-macro.jpg"],
