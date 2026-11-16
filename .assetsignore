@@ -4,3 +4,8 @@
 .assetsignore
 supabase
 *.md
+
+# 빌드 도구와 원본 (사이트에는 빌드 결과물 app.js 만 올라간다)
+tools
+*.jsx
+.github

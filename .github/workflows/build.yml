@@ -1,0 +1,23 @@
+# GitHub 웹에서 data.js · .jsx 를 고쳐도 사이트가 반영되도록, 푸시되면 빌드해서 결과물을 커밋한다.
+# (컴퓨터에서 커밋할 땐 pre-commit 훅이 이미 빌드하므로 여기선 바뀐 게 없어 그냥 끝난다)
+name: build
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['app.js', 'index.html', 'products/**', 'shop/**', 'about/**', 'sitemap.xml', 'robots.txt', 'vendor/**']
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci --prefix tools
+      - run: node tools/build.mjs
+      - run: |
+          git add app.js index.html products shop about sitemap.xml robots.txt vendor
+          if git diff --cached --quiet; then echo "바뀐 결과물 없음"; exit 0; fi
+          git -c user.name="sik-build" -c user.email="actions@users.noreply.github.com" commit -m "사이트 빌드 (자동)"
+          git push

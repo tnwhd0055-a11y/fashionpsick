@@ -77,7 +77,8 @@ const SIK_UI_CSS = `
      워드마크보다 확실히 작아야 헤더의 주인공이 로고로 읽힌다. */
   :root{ --sk-nav:11px; }
   .sk-head{grid-template-columns:1fr auto 1fr;gap:0;padding:15px var(--sk-pad)}
-  .sk-burger{display:flex;justify-self:start;width:22px;gap:5px}
+  .sk-burger{display:flex;justify-self:start;width:22px;gap:5px;box-sizing:content-box;padding:12px 11px;margin:-12px -11px}
+  .sk-head .sh-cart,.sk-head>a{display:inline-flex;padding:12px 6px;margin:-12px -6px}
   .sk-head .sk-mark{justify-self:center;height:20px}
   .sk-nav{display:none}
   .sk-ig-desk{display:none}
@@ -130,12 +131,12 @@ function SikHeader({ nav, active }) {
         <button className="sk-burger" aria-label="메뉴 열기" aria-expanded={open} onClick={() => setOpen(true)}>
           <span /><span /><span />
         </button>
-        <a href="#" onClick={goto("home")} aria-label="SIK 홈">
+        <a href="/" onClick={goto("home")} aria-label="SIK 홈">
           <img className="sk-mark" src={L.light} alt="SIK" />
         </a>
         <nav className="sk-nav sk-ser sk-cap-track">
           {links.map((l) => (
-            <a key={l.key} href="#" data-active={l.key === active ? "1" : null} onClick={goto(l.key)}>{l.label}</a>
+            <a key={l.key} href={window.SIK_URL({ screen: "collection", category: l.key })} data-active={l.key === active ? "1" : null} onClick={goto(l.key)}>{l.label}</a>
           ))}
         </nav>
         <div style={{ justifySelf: "end", display: "flex", gap: 22, alignItems: "center" }}>
@@ -151,8 +152,8 @@ function SikHeader({ nav, active }) {
             <a className="sk-ig sk-ser sk-cap-track" href={IG} target="_blank" rel="noreferrer">INSTAGRAM</a>
           </div>
           <ul className="sk-ser sk-cap-track">
-            {links.map((l) => <li key={l.key}><a href="#" onClick={goto(l.key)}>{l.label}</a></li>)}
-            <li><a href="#" onClick={goto("About")}>ABOUT</a></li>
+            {links.map((l) => <li key={l.key}><a href={window.SIK_URL({ screen: "collection", category: l.key })} onClick={goto(l.key)}>{l.label}</a></li>)}
+            <li><a href="/about/" onClick={goto("About")}>ABOUT</a></li>
             {window.SIK_SHOP && window.SIK_SHOP.on && <li><a href="#" onClick={goto("lookup")}>주문 조회</a></li>}
           </ul>
         </div>
@@ -235,13 +236,13 @@ function SikFooter({ nav }) {
         <div>
           <h4 className="sk-hair-sm">SHOP</h4>
           <ul className="sk-ser sk-cap-track">
-            {window.SIK_NAV.map((l) => <li key={l.key}><a href="#" onClick={goto(l.key)}>{l.label}</a></li>)}
+            {window.SIK_NAV.map((l) => <li key={l.key}><a href={window.SIK_URL({ screen: "collection", category: l.key })} onClick={goto(l.key)}>{l.label}</a></li>)}
           </ul>
         </div>
         <div>
           <h4 className="sk-hair-sm">BRAND</h4>
           <ul className="sk-ser sk-cap-track">
-            <li><a href="#" onClick={goto("About")}>ABOUT</a></li>
+            <li><a href="/about/" onClick={goto("About")}>ABOUT</a></li>
             <li><a href={IG} target="_blank" rel="noreferrer">INSTAGRAM</a></li>
             <li><a href={window.SIK_SMARTSTORE} target="_blank" rel="noreferrer">NAVER STORE</a></li>
             {window.SIK_SHOP && window.SIK_SHOP.on && <li><a href="#" onClick={goto("lookup")}>주문 조회</a></li>}
@@ -252,8 +253,8 @@ function SikFooter({ nav }) {
       <div className="sk-foot-end sk-hair-sm">
         <span>
           © 2026 SIK
-          <a href="#" onClick={goto("terms")} style={{ color: "inherit", marginLeft: 16 }}>이용약관</a>
-          <a href="#" onClick={goto("privacy")} style={{ color: "var(--ink)", fontWeight: 700, marginLeft: 12 }}>개인정보처리방침</a>
+          <a href="/#terms" onClick={goto("terms")} style={{ color: "inherit", marginLeft: 16 }}>이용약관</a>
+          <a href="/#privacy" onClick={goto("privacy")} style={{ color: "var(--ink)", fontWeight: 700, marginLeft: 12 }}>개인정보처리방침</a>
         </span>
         <span>FITNESS AND FASHION</span>
       </div>

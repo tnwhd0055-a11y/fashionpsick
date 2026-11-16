@@ -14,7 +14,7 @@ function AboutPage({ nav }) {
         tone="#1a1a1a"
         display
         kicker="The brand"
-        headline={<>Sport<br />Healty& Everyday</>}
+        headline={<>Sport<br />Healthy & Everyday</>}
         korean="운동과 일상의 경계 없이."
         align="bottom-center"
       />
@@ -24,10 +24,10 @@ function AboutPage({ nav }) {
         <div style={{ maxWidth: 620, margin: "0 auto", textAlign: "center" }}>
           <div className="sik-kicker" style={{ marginBottom: "var(--space-lg)" }}>Our story</div>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: 22, lineHeight: 1.7, color: "var(--ink)", fontWeight: 500, margin: 0, textWrap: "pretty", wordBreak: "keep-all" }}>
-            SIK은 피트니스 라이프스타일에서 출발한 액세서리 브랜드입니다. 천연 조개로 만든 미니멀한 목걸이는 운동할 때도, 평상시에도 자연스럽게 어울립니다.
+            SIK은 피트니스 라이프스타일에서 출발한 패션 브랜드입니다. 자연석·원석 비즈로 엮은 목걸이와 운동한 몸에 맞는 데일리웨어는 운동할 때도, 평상시에도 자연스럽게 어울립니다.
           </p>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: 16, lineHeight: 1.8, color: "var(--charcoal)", marginTop: "var(--space-xl)", textWrap: "pretty", wordBreak: "keep-all" }}>
-            피식푸드(@psickfood)에서 시작된 SIK은 짐웨어와 데일리룩의 경계를 지웁니다. 과한 장식 없이, 절제된 디자인으로 — 매일 착용할 수 있는 가벼움을 만듭니다.
+            피식푸드에서 시작된 SIK은 짐웨어와 데일리룩의 경계를 지웁니다. 과한 장식 없이, 절제된 디자인으로 — 매일 착용할 수 있는 가벼움을 만듭니다.
           </p>
         </div>
       </PageWrap>
@@ -42,7 +42,7 @@ function AboutPage({ nav }) {
       {/* Two moods */}
       <PageWrap style={{ paddingTop: "var(--space-5xl)" }}>
         <div className="sik-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-          <Editorial ratio="4 / 5" image={IMG} imagePos="center" kicker="The piece" headline="Natural shell" />
+          <Editorial ratio="4 / 5" image={IMG} imagePos="center" kicker="The piece" headline="Natural stone" />
           <Editorial ratio="4 / 5" tone="#161616" kicker="In the everyday" headline="Kept for the day" />
         </div>
       </PageWrap>
@@ -51,7 +51,7 @@ function AboutPage({ nav }) {
       <PageWrap style={{ paddingTop: "var(--space-5xl)" }}>
         <div className="sik-3col" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "var(--space-3xl)", borderTop: "var(--divider-hairline)", paddingTop: "var(--space-3xl)" }}>
           {[
-            ["Natural", "천연 조개 소재. 가공을 최소화한 본연의 질감."],
+            ["Natural", "자연석·원석 비즈. 돌마다 다른 결과 색이 그대로 살아 있습니다."],
             ["Minimal", "두 톤의 절제된 디자인. 과한 컬러도, 장식도 없습니다."],
             ["Everyday", "운동과 일상 어디서나. 가볍게 매일 착용하는 무게."],
           ].map(([h, p]) => (

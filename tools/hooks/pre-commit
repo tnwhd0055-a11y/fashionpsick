@@ -1,0 +1,4 @@
+#!/bin/sh
+# 커밋할 때마다 사이트를 다시 빌드해서 결과물(app.js, 정적 페이지, sitemap)을 같이 커밋한다.
+node tools/build.mjs || exit 1
+git add app.js index.html products shop about sitemap.xml robots.txt vendor

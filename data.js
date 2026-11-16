@@ -27,6 +27,7 @@
       gallery: ["assets/necklace-model.jpg", "assets/necklace-front-sq.jpg", "assets/necklace-2.png", "assets/necklace-3.png"],
       swatches: [SW.blackbrown], length: "42 cm + 5 cm",
       detail: "stone",
+      blurb: "블랙브라운 톤의 자연석 비즈를 촘촘히 엮은 SIK 시그니처 목걸이. 과하지 않은 두께라 운동할 때도, 셔츠나 티셔츠 위에도 매일 편하게 착용할 수 있습니다.",
       // 실제 착용 사진 (네이버 상세페이지에 있던 것, 2026-11 가져옴) — 상세 아래 'Styled by SIK' 에 나온다
       realShots: ["assets/stone-real-1.jpg", "assets/stone-real-2.jpg", "assets/stone-real-3.jpg"],
       spec: [["브랜드", "SIK"], ["제품명", "내추럴 스톤 비즈 목걸이"], ["컬러", "블랙브라운"], ["소재", "내추럴 스톤 비즈"], ["사이즈", "42cm + 연장 체인 5cm"], ["제조국", "중국"]],
@@ -237,4 +238,54 @@
     { title: "Help", links: ["Shipping", "Returns", "문의 · Contact"] },
     { title: "Brand", links: ["About", "Instagram", "Naver Store"] },
   ];
+  // ── 주소(URL) · 검색 노출 문구 ─────────────────────────────
+  // 화면마다 진짜 주소가 있어야 구글·네이버가 상품을 따로 색인한다 (2026-11 SEO).
+  // tools/build.mjs 가 이 값으로 /products/<id>/ 등 정적 페이지를 만들고, 앱은 같은 함수로 주소를 바꾼다.
+  var SLUG = { All: "all", Tops: "tops", Bottoms: "bottoms", Accessories: "accessories", Belt: "belt", Necklaces: "necklaces" };
+  window.SIK_SITE = "https://sikseoul.com";
+  window.SIK_URL = function (v) {
+    if (!v) return "/";
+    if (v.screen === "product" && v.productId) return "/products/" + v.productId + "/";
+    if (v.screen === "about") return "/about/";
+    if (v.screen === "collection") return "/shop/" + (SLUG[v.category] || "all") + "/";
+    return "/";
+  };
+  window.SIK_VIEW_FROM_PATH = function (path) {
+    var m = /^\/products\/([^/]+)\/?$/.exec(path);
+    if (m && products.some(function (p) { return p.id === m[1]; })) return { screen: "product", productId: m[1], category: null };
+    if (/^\/about\/?$/.test(path)) return { screen: "about", productId: null, category: null };
+    m = /^\/shop\/([^/]+)\/?$/.exec(path);
+    if (m) for (var k in SLUG) if (SLUG[k] === m[1]) return { screen: "collection", productId: null, category: k };
+    return null;
+  };
+  var CAT_KW = { Necklaces: "남자 목걸이", Tops: "남자 반팔", Accessories: "남자 벨트" };
+  var CAT_TITLE = { All: "전체 상품", Tops: "남자 반팔 · 상의", Bottoms: "하의", Accessories: "남자 목걸이 · 액세서리", Belt: "남자 벨트" };
+  window.SIK_SEO = {
+    home: {
+      title: "SIK | 남자 비즈 목걸이 · 운동하는 남자의 데일리웨어",
+      desc: "운동하는 사람을 위한 패션 브랜드 SIK(식). 자연석·호안석 비즈 목걸이, 메쉬 반팔 셔츠, 웨스턴 벨트를 SIK 공식몰에서 만나보세요.",
+      h1: "SIK — 남자 비즈 목걸이와 운동하는 남자의 데일리웨어",
+    },
+    about: {
+      title: "브랜드 소개 | SIK",
+      desc: "SIK은 피트니스 라이프스타일에서 출발한 패션 브랜드입니다. 운동할 때도, 평소에도 어울리는 자연석 비즈 목걸이와 데일리웨어를 만듭니다.",
+    },
+    cat: function (key) {
+      var t = CAT_TITLE[key] || "전체 상품";
+      return { title: t + " | SIK", desc: "SIK " + t + " — 운동하는 남자를 위한 비즈 목걸이와 데일리웨어. SIK 공식몰." , h1: t };
+    },
+    product: function (p) {
+      var spec = {}; (p.spec || []).forEach(function (r) { spec[r[0]] = r[1]; });
+      var bits = [p.blurb, spec["소재"] ? "소재 " + spec["소재"] + "." : "", spec["사이즈"] && !/준비/.test(spec["사이즈"]) && p.cat !== "Tops" ? "사이즈 " + spec["사이즈"] + "." : ""];
+      var desc = bits.filter(Boolean).join(" ") + " SIK 공식몰 " + p.price.toLocaleString("ko-KR") + "원.";
+      return { title: p.name + (CAT_KW[p.cat] ? " · " + CAT_KW[p.cat] : "") + " | SIK", desc: desc };
+    },
+  };
+  window.SIK_TITLE = function (v) {
+    var S = window.SIK_SEO;
+    if (v && v.screen === "product") { var p = products.filter(function (x) { return x.id === v.productId; })[0]; if (p) return S.product(p).title; }
+    if (v && v.screen === "about") return S.about.title;
+    if (v && v.screen === "collection") return S.cat(v.category).title;
+    return S.home.title;
+  };
 })();

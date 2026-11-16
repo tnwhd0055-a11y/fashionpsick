@@ -31,7 +31,7 @@ function ProductTile({ p, onOpen }) {
     transition: "opacity .35s ease", opacity: show ? 1 : 0,
   });
   return (
-    <a href="#" onClick={(e) => { e.preventDefault(); onOpen(p.id); }}
+    <a href={window.SIK_URL({ screen: "product", productId: p.id })} onClick={(e) => { e.preventDefault(); onOpen(p.id); }}
        onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
        className={p.soldOut ? "is-sold" : undefined}
        style={{ display: "block", textDecoration: "none", color: "inherit" }}>

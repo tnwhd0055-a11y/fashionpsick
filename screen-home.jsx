@@ -95,16 +95,18 @@ function HomePage({ nav, openProduct }) {
     <div style={{ background: "var(--paper)" }}>
       <style>{HOME_CSS}</style>
       <SikHeader nav={nav} active={null} />
+      {/* 홈 대표 제목 — 화면 디자인은 사진이 주인공이라 눈에는 안 보이게, 검색엔진·스크린리더용 */}
+      <h1 style={{ position: "absolute", width: 1, height: 1, margin: -1, padding: 0, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: 0 }}>{window.SIK_SEO ? window.SIK_SEO.home.h1 : "SIK"}</h1>
 
       <section className="sk-hero">
         <figure className="sk-hero-a sk-rise">
-          <a href="#" className="sk-shot" style={{ display: "block" }} onClick={open(heroA.id)}>
+          <a href={window.SIK_URL({ screen: "product", productId: heroA.id })} className="sk-shot" style={{ display: "block" }} onClick={open(heroA.id)}>
             <img src={heroA.image} alt={heroA.name} />
           </a>
           <figcaption className="sk-cap sk-hair-sm">{heroA.subtitle || heroA.name}</figcaption>
         </figure>
         <figure className="sk-hero-b sk-rise sk-rise-2">
-          <a href="#" className="sk-shot" style={{ display: "block" }} onClick={open(heroB.id)}>
+          <a href={window.SIK_URL({ screen: "product", productId: heroB.id })} className="sk-shot" style={{ display: "block" }} onClick={open(heroB.id)}>
             <img src={heroB.image} alt={heroB.name} />
           </a>
           <figcaption className="sk-cap sk-hair-sm">{heroB.subtitle || heroB.name}</figcaption>
@@ -126,7 +128,7 @@ function HomePage({ nav, openProduct }) {
           </div>
           <div className="sk-grid">
             {P.map((p) => (
-              <a key={p.id} className={"sk-card" + (p.soldOut ? " is-sold" : "")} href="#" onClick={open(p.id)}>
+              <a key={p.id} className={"sk-card" + (p.soldOut ? " is-sold" : "")} href={window.SIK_URL({ screen: "product", productId: p.id })} onClick={open(p.id)}>
                 <div className="sk-shot">
                   <img src={p.image} alt={p.name} loading="lazy" />
                   {p.soldOut && <span className="sk-sold">일시 품절</span>}
